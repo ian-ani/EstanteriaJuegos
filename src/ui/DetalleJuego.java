@@ -1,19 +1,20 @@
 package ui;
 
 import modelo.Estado;
+import modelo.Juego;
 import modelo.Valoracion;
 import utiles.Mensaje;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.List;
+import java.util.function.Consumer;
 
 public class DetalleJuego extends JDialog {
     private Set<String> etiquetasTmp = new HashSet<>();
+    private Consumer<Juego> onJuegoCreado; // callback consumer
 
     private JPanel panelGeneral;
     private JButton buttonOK;
@@ -119,11 +120,15 @@ public class DetalleJuego extends JDialog {
         etiquetasAnadidasPanel.add(panel);
 
         // Anadir texto
-        panel.add(new JTextField(etiquetaEntrada.getText().trim()));
+        JTextField etiqueta = new JTextField(etiquetaEntrada.getText().trim());
+        panel.add(etiqueta);
 
         // Anadir boton
         JButton btn = new JButton("x");
         panel.add(btn);
+
+        // Anadir a la lista
+        etiquetasTmp.add(etiqueta.getText());
 
         // Evento que borra un panel (con su campo de texto y boton)
         btn.addActionListener(new ActionListener() {
@@ -164,13 +169,13 @@ public class DetalleJuego extends JDialog {
     }
 
     // Obtener valor de los radios
-    private JRadioButton getRadio(JPanel panel) {
+    private String getRadio(JPanel panel) {
         Component[] componentes = panel.getComponents();
 
         for (Component c: componentes) {
             if (c instanceof JRadioButton btn) {
                 if (btn.isSelected()) {
-                    return btn;
+                    return btn.getActionCommand();
                 }
             }
         }
@@ -179,22 +184,37 @@ public class DetalleJuego extends JDialog {
     }
 
     // Guardar los datos de campos y radios en Juego
-    private void guardarJuego() {
+    private Juego crearJuego() {
+        // Obtener campos
         String nombre = nombreEntrada.getText();
         String plataforma = plataformaEntrada.getText();
-        Estado estado = getRadio(estadoPanel);
-        // TODO etiquetas debe ser un text field con tags/chips
-        Valoracion valoracion = getRadio(valoracionPanel);
+        Estado estado = Estado.valueOf(getRadio(estadoPanel));
+        Valoracion valoracion = Valoracion.valueOf(getRadio(valoracionPanel));
         String notas = notasEntrada.getText();
 
-        // TODO falta guardar
+        // Instanciar juego
+        Juego juego = new Juego(nombre, plataforma, estado, valoracion, notas);
+
+        // Anadir etiquetas guardadas temporalmente en 'etiquetasTmp'
+        for (String e: etiquetasTmp) {
+            juego.anadirEtiqueta(e);
+        }
+
+        return juego;
     }
 
     // Boton 'OK'
     private void onOK() {
         try {
-            guardarJuego();
+            Juego juego = crearJuego();
+
+            // Si hay 'alguien' esta a la espera de una senal
+            if (onJuegoCreado != null) {
+                onJuegoCreado.accept(juego); // ejecuta callback
+            }
+
             // TODO limpiar panel al anadirlo
+            dispose();
         } catch (Exception e) {
             Mensaje.mostrarMensajeError("Error", "No se ha podido guardar el juego.");
         }
@@ -204,6 +224,11 @@ public class DetalleJuego extends JDialog {
     private void onCancel() {
         // Cerrar ventana
         dispose();
+    }
+
+    // Registrar callback
+    public void setOnJuegoCreado(Consumer<Juego> c) {
+        this.onJuegoCreado = c;
     }
 
     // MAIN

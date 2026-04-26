@@ -102,6 +102,12 @@ public class VentanaPrincipal {
             detalleJuegoWindow.setLocationRelativeTo(null);
         }
 
+        detalleJuegoWindow.setOnJuegoCreado((juego) -> {
+                juegos.add(juego);
+                crearTabla();
+            }
+        );
+
         detalleJuegoWindow.setVisible(true);
     }
 
