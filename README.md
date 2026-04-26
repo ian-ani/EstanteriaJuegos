@@ -1,0 +1,2 @@
+# EstanteriaJuegos
+Registro de juegos.
