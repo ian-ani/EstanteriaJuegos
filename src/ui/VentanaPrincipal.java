@@ -1,6 +1,8 @@
 package ui;
 
+import modelo.Estado;
 import modelo.Juego;
+import modelo.Valoracion;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -41,6 +43,9 @@ public class VentanaPrincipal {
     /* CONSTRUCTOR */
 
     public VentanaPrincipal() {
+        // TODO borrar test
+        test();
+
         crearTabla();
         anadirButton.addActionListener(new ActionListener() {
             @Override
@@ -57,6 +62,18 @@ public class VentanaPrincipal {
     }
 
     /* OTROS METODOS */
+
+    // TODO borrar luego!!
+    private void test() {
+        juegos.add(new Juego("Diablo III", "PlayStation 3", Estado.COMPLETADO,
+                Valoracion.GUSTADO, "Cosas."));
+        juegos.get(0).anadirEtiqueta("arpg");
+
+        juegos.add(new Juego("The Longest Journey", "PC", Estado.COMPLETADO,
+                Valoracion.GUSTADO, "Comentario muuuuuuuuuuuuuuuuuuuuuy largo."));
+        juegos.get(1).anadirEtiqueta("point n click");
+        juegos.get(1).anadirEtiqueta("puzzles");
+    }
 
     private void crearTabla() {
         // Matriz de datos para guardar los juegos
@@ -116,6 +133,10 @@ public class VentanaPrincipal {
     }
 
     private void editar() {
+
+    }
+
+    private void buscar() {
 
     }
 
