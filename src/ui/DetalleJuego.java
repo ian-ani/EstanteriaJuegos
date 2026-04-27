@@ -115,6 +115,9 @@ public class DetalleJuego extends JDialog {
     }
 
     private void crearPanelEtiqueta() {
+        // Si la etiqueta ya existe, no continuar
+        if (etiquetaExiste(etiquetaEntrada.getText().trim())) return;
+
         // Anadir panel
         JPanel panel = new JPanel();
         etiquetasAnadidasPanel.add(panel);
@@ -166,6 +169,14 @@ public class DetalleJuego extends JDialog {
         }
 
         return campo.getText().trim().length() <= largo;
+    }
+
+    private boolean etiquetaExiste(String etiqueta) {
+        for (String e: etiquetasTmp) {
+            if (e.equalsIgnoreCase(etiqueta)) return true;
+        }
+
+        return false;
     }
 
     // Obtener valor de los radios
@@ -269,6 +280,9 @@ public class DetalleJuego extends JDialog {
 
     // Boton 'CANCELAR'
     private void onCancel() {
+        // Reinicio de la ventana (limpiar juego)
+        init();
+
         // Cerrar ventana
         dispose();
     }
