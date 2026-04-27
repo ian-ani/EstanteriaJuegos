@@ -183,6 +183,50 @@ public class DetalleJuego extends JDialog {
         return null;
     }
 
+    // Quita la seleccion de los radio del panel pasado y pone como seleccionado un radio especifico
+    private void reiniciarRadio(JPanel panel, JRadioButton radio) {
+        // Componentes del panel
+        Component[] componentes = panel.getComponents();
+
+        // Si es un boton, deseleccionar
+        for (Component c: componentes) {
+            if (c instanceof JRadioButton btn) {
+                btn.setSelected(false);
+            }
+        }
+
+        radio.setSelected(true);
+    }
+
+    private void reiniciarEtiquetas(JPanel panel) {
+        // Componentes del panel
+        Component[] componentes = panel.getComponents();
+
+        // Recorrer componentes, borrar si es un JPanel
+        for (Component c: componentes) {
+            if (c instanceof JPanel) {
+                panel.remove(c);
+            }
+        }
+    }
+
+    // Limpia el juego de la ventana actual para que no quede basurilla
+    private void init() {
+        // Vaciar campos de texto
+        nombreEntrada.setText("");
+        plataformaEntrada.setText("");
+        notasEntrada.setText("");
+
+        // Deseleccionar todos los radios y seleccionar uno especifico
+        reiniciarRadio(estadoPanel, completadoRadio);
+        reiniciarRadio(valoracionPanel, noValoradoRadio);
+
+        // Eliminar lo referente a etiquetas (campo de texto, vaciar lista, vaciar paneles)
+        etiquetaEntrada.setText("");
+        etiquetasTmp.clear();
+        reiniciarEtiquetas(etiquetasAnadidasPanel);
+    }
+
     // Guardar los datos de campos y radios en Juego
     private Juego crearJuego() {
         // Obtener campos
@@ -212,6 +256,9 @@ public class DetalleJuego extends JDialog {
             if (onJuegoCreado != null) {
                 onJuegoCreado.accept(juego); // ejecuta callback
             }
+
+            // Reinicio de la ventana (limpiar juego)
+            init();
 
             // TODO limpiar panel al anadirlo
             dispose();
