@@ -3,12 +3,16 @@ package ui;
 import modelo.Estado;
 import modelo.Juego;
 import modelo.Valoracion;
+import utiles.Mensaje;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static config.UIConstantes.*;
@@ -21,8 +25,6 @@ public class VentanaPrincipal {
 
     // Variables de GestionJuegos
     private JPanel panelGeneral;
-    private JLabel tituloLabel;
-    private JPanel tituloPanel;
     private JPanel busquedaPanel;
     private JPanel juegoPanel;
     private JPanel botonesPanel;
@@ -36,6 +38,7 @@ public class VentanaPrincipal {
     private JPanel juegoBotonPanel;
     private JPanel persistenciaPanel;
     private JButton Guardar;
+    private JButton reiniciarButton;
 
     // Lista donde se van a guardar los juegos temporalmente
     List<Juego> juegos = new ArrayList<>();
@@ -46,11 +49,38 @@ public class VentanaPrincipal {
         // TODO borrar test
         test();
 
-        crearTabla();
+        crearTabla(juegos);
+
+        // Llama a la ventana de 'anadir juego'
         anadirButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 anadir();
+            }
+        });
+
+        // Busca un juego (por nombre) al pulsar 'Enter'
+        busquedaEntrada.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    boolean encontrado = buscar(busquedaEntrada.getText());
+
+                    if (!encontrado) Mensaje.mostrarMensajeError(
+                            "No encontrado",
+                            "No se ha encontrado ningún juego con ese nombre."
+                    );
+                }
+            }
+        });
+
+        // Reinicia la tabla (despues de haber filtrado)
+        reiniciarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Tecnicamente no es necesario si se escribe "" y pulsa 'Enter'
+                // pero queda un poco mejor de cara a UX?
+                reiniciar();
             }
         });
     }
@@ -75,20 +105,20 @@ public class VentanaPrincipal {
         juegos.get(1).anadirEtiqueta("puzzles");
     }
 
-    private void crearTabla() {
+    private void crearTabla(List<Juego> lista) {
         // Matriz de datos para guardar los juegos
-        Object[][] datos = new Object[juegos.size()][6];
+        Object[][] datos = new Object[lista.size()][6];
 
         // Fila
         for (int i = 0; i < datos.length; i++) {
             // Columna
             for (int j = 0; j < datos[0].length; j++) {
-                datos[i][0] = juegos.get(i).getNombre();
-                datos[i][1] = juegos.get(i).getPlataforma();
-                datos[i][2] = juegos.get(i).getEstado();
-                datos[i][3] = juegos.get(i).getEtiquetas();
-                datos[i][4] = juegos.get(i).getValoracion();
-                datos[i][5] = juegos.get(i).getNotas();
+                datos[i][0] = lista.get(i).getNombre();
+                datos[i][1] = lista.get(i).getPlataforma();
+                datos[i][2] = lista.get(i).getEstado();
+                datos[i][3] = lista.get(i).getEtiquetas();
+                datos[i][4] = lista.get(i).getValoracion();
+                datos[i][5] = lista.get(i).getNotas();
             }
         }
 
@@ -121,7 +151,7 @@ public class VentanaPrincipal {
 
         detalleJuegoWindow.setOnJuegoCreado((juego) -> {
                 juegos.add(juego);
-                crearTabla();
+                crearTabla(juegos);
             }
         );
 
@@ -136,8 +166,27 @@ public class VentanaPrincipal {
 
     }
 
-    private void buscar() {
+    private boolean buscar(String nombre) {
+        List<Juego> tmp = new ArrayList<>();
 
+        for (Juego j: juegos) {
+            if (j.getNombre().toLowerCase().contains(nombre.toLowerCase())) {
+                tmp.add(j);
+            }
+        }
+
+        // Ordenar ascendentemente antes de mostrar
+        tmp.sort(Comparator.comparing(Juego::getNombre));
+
+        // Muestra de nuevo la tabla con los datos coincidentes
+        crearTabla(tmp);
+
+        return !tmp.isEmpty();
+    }
+
+    private void reiniciar() {
+        busquedaEntrada.setText("");
+        crearTabla(juegos);
     }
 
     // Guardar juegos en archivo para persistencia!
