@@ -27,7 +27,7 @@ public class VentanaPrincipal {
     private JPanel juegoPanel;
     private JPanel botonesPanel;
     private JButton eliminarButton;
-    private JButton editarButton;
+    private JButton verButton;
     private JButton anadirButton;
     private JScrollPane tablaPanel;
     private JTextField busquedaEntrada;
@@ -206,7 +206,7 @@ public class VentanaPrincipal {
         }
     }
 
-    private void editar() {
+    private void ver() {
 
     }
 
@@ -237,4 +237,5 @@ public class VentanaPrincipal {
     // Editar debe abrir una nueva ventana
     // Anadir busqueda por mas campos
     // Seguramente pulsando a algo de la cabecera podria filtrar por asc desc en base a esa columna?
+    // Anadir icono del programa
 }
