@@ -1,10 +1,30 @@
 package modelo;
 
 public enum Valoracion {
-    GUSTADO,
-    NO_GUSTADO,
-    INDIFERENTE,
-    NO_VALORADO;
+    /* VALORES */
+    GUSTADO("Gustado"),
+    NO_GUSTADO("No gustado"),
+    INDIFERENTE("Indiferente"),
+    NO_VALORADO("Sin valoración");
+
+    /* ATRIBUTOS */
+
+    private final String nombre;
+
+    /* CONSTRUCTOR */
+
+    Valoracion(String nombre) {
+        this.nombre = nombre;
+    }
+
+    /* METODO TOSTRING */
+
+    @Override
+    public String toString() {
+        return this.nombre;
+    }
+
+    /* OTROS METODOS */
 
     public static boolean esMiembro(String valor) {
         Valoracion[] valoraciones = Valoracion.values();
