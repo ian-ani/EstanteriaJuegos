@@ -7,10 +7,8 @@ import utiles.Mensaje;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -40,6 +38,9 @@ public class VentanaPrincipal {
     private JButton Guardar;
     private JButton reiniciarButton;
 
+    // Juego seleccionado
+    Juego juegoSeleccionado;
+
     // Lista donde se van a guardar los juegos temporalmente
     List<Juego> juegos = new ArrayList<>();
 
@@ -56,6 +57,22 @@ public class VentanaPrincipal {
             @Override
             public void actionPerformed(ActionEvent e) {
                 anadir();
+            }
+        });
+
+        // Seleccionar fila
+        tabla.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                JTable t = (JTable) e.getSource();
+                Point p = e.getPoint();
+                int fila = tabla.rowAtPoint(p);
+
+                if (e.getClickCount() != -1 && tabla.getSelectedRow() != -1 && fila != -1) {
+                    int filaModelo = tabla.convertRowIndexToModel(fila);
+                    juegoSeleccionado = juegos.get(filaModelo);
+                    eliminarButton.setEnabled(true);
+                }
             }
         });
 
@@ -81,6 +98,22 @@ public class VentanaPrincipal {
                 // Tecnicamente no es necesario si se escribe "" y pulsa 'Enter'
                 // pero queda un poco mejor de cara a UX?
                 reiniciar();
+            }
+        });
+
+        // Borrar registro seleccionado
+        eliminarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Borrar juego guardado en 'juegoSeleccionado'
+                boolean borrado = eliminar();
+
+                // Mensaje al usuario
+                if (borrado) Mensaje.mostrarMensajeInfo("Juego borrado", "Juego borrado correctamente.");
+                else Mensaje.mostrarMensajeError("Juego no borrado", "No se ha podido borrar el juego seleccionado.");
+
+                // Volver a mostrar la tabla
+                crearTabla(juegos);
             }
         });
     }
@@ -158,8 +191,19 @@ public class VentanaPrincipal {
         detalleJuegoWindow.setVisible(true);
     }
 
-    private void eliminar() {
-        // Borrar juego seleccionado
+    private boolean eliminar() {
+        try {
+            // Borrar juego
+            juegos.remove(juegoSeleccionado);
+
+            // Desactivar boton de eliminar
+            eliminarButton.setEnabled(false);
+
+            return true;
+        } catch (Exception e) {
+            System.err.println("No se ha podido borrar el juego seleccionado: " + e.getMessage());
+            return false;
+        }
     }
 
     private void editar() {
@@ -190,8 +234,7 @@ public class VentanaPrincipal {
     }
 
     // Guardar juegos en archivo para persistencia!
-    // Permitir exportar? si eso al final
     // Editar debe abrir una nueva ventana
-    // En principio permitir buscar solo por nombre, luego podria anadir busqueda por mas campos
+    // Anadir busqueda por mas campos
     // Seguramente pulsando a algo de la cabecera podria filtrar por asc desc en base a esa columna?
 }
