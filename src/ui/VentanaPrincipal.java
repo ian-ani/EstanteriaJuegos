@@ -249,16 +249,11 @@ public class VentanaPrincipal {
     private void reiniciar() {
         busquedaEntrada.setText("");
         crearTabla(juegos);
-
-        // TODO Funciona a medias, esto es una nyapa debe haber algo mejor...
-
-        /*eliminarButton.setEnabled(false);
-        verButton.setEnabled(false);*/
     }
 
     // Guardar juegos en archivo para persistencia!
-    // Editar debe abrir una nueva ventana
     // Anadir busqueda por mas campos
     // Seguramente pulsando a algo de la cabecera podria filtrar por asc desc en base a esa columna?
     // Anadir icono del programa
+    // Si no hay nada seleccionado, deberian bloquearse 'borrar' y 'ver', eso sigue mal
 }
