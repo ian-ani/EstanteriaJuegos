@@ -366,7 +366,7 @@ public class DetalleJuego extends JDialog {
     public void setOnJuegoCreado(Consumer<Juego> c) {
         this.onJuegoCreado = c;
     }
-    
+
     // Comprobar que un juego no existe ya antes de anadirlo (no en base al nombre, porque yo tengo varios repes
     // en diferentes plataformas, pero si en base a si TO DO coincide... un equals?)
 }

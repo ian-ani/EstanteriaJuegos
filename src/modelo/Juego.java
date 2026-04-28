@@ -129,8 +129,4 @@ public class Juego {
     public int hashCode() {
         return Objects.hash(nombre, plataforma, estado, etiquetas, valoracion, notas);
     }
-
-    /* OTROS METODOS */
-
-    // TODO metodos de busqueda?
 }
