@@ -16,6 +16,9 @@ public class DetalleJuego extends JDialog {
     private Set<String> etiquetasTmp = new HashSet<>();
     private Consumer<Juego> onJuegoCreado; // callback consumer
 
+    private Juego juegoSeleccionado;
+    private Modo modoSeleccionado;
+
     private JPanel panelGeneral;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -50,17 +53,31 @@ public class DetalleJuego extends JDialog {
     private JButton anadirEtiquetaButton;
     private JPanel etiquetasAnadidasPanel;
 
-    public DetalleJuego() {
+    // enum anidado para el 'Modo' (se pasa al constructor al abrir la ventana)
+    public enum Modo {
+        VER, CREAR;
+    }
+
+    public DetalleJuego(Juego juegoSeleccionado, Modo modo) {
+        this.juegoSeleccionado = juegoSeleccionado;
+        this.modoSeleccionado = modo;
+
+        // Configuracion inicial de la ventana (limpieza de registro anterior y texto del boton 'ok')
+        init();
+
+        // Mas configuracion de la ventana
         setContentPane(panelGeneral);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
+        // Evento del boton 'OK'
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onOK();
             }
         });
 
+        // Evento del boton 'CANCEL'
         buttonCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
@@ -90,7 +107,7 @@ public class DetalleJuego extends JDialog {
                     if (validarEntrada(15, etiquetaEntrada)) {
                         // TODO hacer que los botones de las etiquetas sean mas pequenos, se ve feo
                         // Anadir panel con campo de texto y un boton de eliminar
-                        crearPanelEtiqueta();
+                        crearPanelEtiqueta(etiquetaEntrada.getText().trim());
                     } else {
                         Mensaje.mostrarMensajeError(
                                 "Etiqueta no válida",
@@ -114,16 +131,16 @@ public class DetalleJuego extends JDialog {
         panel.repaint();
     }
 
-    private void crearPanelEtiqueta() {
+    private void crearPanelEtiqueta(String _etiqueta) {
         // Si la etiqueta ya existe, no continuar
-        if (etiquetaExiste(etiquetaEntrada.getText().trim())) return;
+        if (etiquetaExiste(_etiqueta)) return;
 
         // Anadir panel
         JPanel panel = new JPanel();
         etiquetasAnadidasPanel.add(panel);
 
         // Anadir texto
-        JTextField etiqueta = new JTextField(etiquetaEntrada.getText().trim());
+        JTextField etiqueta = new JTextField(_etiqueta);
         panel.add(etiqueta);
 
         // Anadir boton
@@ -194,6 +211,19 @@ public class DetalleJuego extends JDialog {
         return null;
     }
 
+    // Selecciona un radio (cuando se pulsa 'ver', es para rellenar con lo que haya en la tabla)
+    private void marcarRadio(JPanel panel, String valor) {
+        // Componentes del panel
+        Component[] componentes = panel.getComponents();
+
+        // Si coin
+        for (Component c: componentes) {
+            if (c instanceof JRadioButton btn) {
+                btn.setSelected(btn.getActionCommand().equalsIgnoreCase(valor));
+            }
+        }
+    }
+
     // Quita la seleccion de los radio del panel pasado y pone como seleccionado un radio especifico
     private void reiniciarRadio(JPanel panel, JRadioButton radio) {
         // Componentes del panel
@@ -209,6 +239,7 @@ public class DetalleJuego extends JDialog {
         radio.setSelected(true);
     }
 
+    // Reinicia las etiquetas (las borra)
     private void reiniciarEtiquetas(JPanel panel) {
         // Componentes del panel
         Component[] componentes = panel.getComponents();
@@ -221,8 +252,31 @@ public class DetalleJuego extends JDialog {
         }
     }
 
-    // Limpia el juego de la ventana actual para que no quede basurilla
-    private void init() {
+    private void initVer() {
+        // Cambiar texto de boton 'OK' a 'Editar'
+        buttonOK.setText("Editar");
+
+        // Volcar toda la informacion de Juego a los campos de texto
+        nombreEntrada.setText(juegoSeleccionado.getNombre());
+        plataformaEntrada.setText(juegoSeleccionado.getPlataforma());
+        notasEntrada.setText(juegoSeleccionado.getNotas());
+
+        // Marcar radios
+        marcarRadio(estadoPanel, juegoSeleccionado.getEstado().toString());
+        marcarRadio(valoracionPanel, juegoSeleccionado.getValoracion().toString());
+
+        // TODO ahora mismo hay un bug donde si una etiqueta se borra y se quiere anadir, no se anade
+
+        // Anadir etiquetas
+        for (String e: juegoSeleccionado.getEtiquetas()) {
+            crearPanelEtiqueta(e);
+        }
+    }
+
+    private void initCrear() {
+        // Cambiar texto de boton 'OK' a 'Crear'
+        buttonOK.setText("Crear");
+
         // Vaciar campos de texto
         nombreEntrada.setText("");
         plataformaEntrada.setText("");
@@ -236,6 +290,14 @@ public class DetalleJuego extends JDialog {
         etiquetaEntrada.setText("");
         etiquetasTmp.clear();
         reiniciarEtiquetas(etiquetasAnadidasPanel);
+    }
+
+    // Limpia el juego de la ventana actual para que no quede basurilla
+    private void init() {
+        switch (modoSeleccionado) {
+            case Modo.VER -> initVer();
+            case Modo.CREAR -> initCrear();
+        }
     }
 
     // Guardar los datos de campos y radios en Juego
@@ -258,31 +320,44 @@ public class DetalleJuego extends JDialog {
         return juego;
     }
 
+    // Modificar juego si se ha abierto desde 'ver'
+    private void modificarJuego() {
+        juegoSeleccionado.setNombre(nombreEntrada.getText());
+        juegoSeleccionado.setPlataforma(plataformaEntrada.getText());
+        juegoSeleccionado.setEstado(Estado.valueOf(getRadio(estadoPanel)));
+        juegoSeleccionado.setValoracion(Valoracion.valueOf(getRadio(valoracionPanel)));
+        juegoSeleccionado.setNotas(notasEntrada.getText());
+
+        // Anadir etiquetas guardadas temporalmente en 'etiquetasTmp'
+        for (String e: etiquetasTmp) {
+            juegoSeleccionado.anadirEtiqueta(e);
+        }
+    }
+
     // Boton 'OK'
     private void onOK() {
         try {
-            Juego juego = crearJuego();
+            switch (modoSeleccionado) {
+                case Modo.VER -> modificarJuego();
+                case Modo.CREAR -> {
+                    Juego juego = crearJuego();
 
-            // Si hay 'alguien' esta a la espera de una senal
-            if (onJuegoCreado != null) {
-                onJuegoCreado.accept(juego); // ejecuta callback
+                    // Si hay 'alguien' esta a la espera de una senal
+                    if (onJuegoCreado != null) {
+                        onJuegoCreado.accept(juego); // ejecuta callback
+                    }
+                }
             }
-
-            // Reinicio de la ventana (limpiar juego)
-            init();
-
-            // TODO limpiar panel al anadirlo
-            dispose();
         } catch (Exception e) {
             Mensaje.mostrarMensajeError("Error", "No se ha podido guardar el juego.");
+        } finally {
+            // Cerrar ventana
+            dispose();
         }
     }
 
     // Boton 'CANCELAR'
     private void onCancel() {
-        // Reinicio de la ventana (limpiar juego)
-        init();
-
         // Cerrar ventana
         dispose();
     }
@@ -291,20 +366,7 @@ public class DetalleJuego extends JDialog {
     public void setOnJuegoCreado(Consumer<Juego> c) {
         this.onJuegoCreado = c;
     }
-
-    // MAIN
-    public static void main(String[] args) {
-        DetalleJuego dialog = new DetalleJuego();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
-    }
-
-    // Crear y editar podrian llamar ambos a esta ventana, pero desde GestionJuegos
-    // se podria mandar el objeto de ese juego en especifico
-    // Si es null no se ha creado, entonces llama a crear
-    // Si no es null ya existe y se llama a editar
-    // Si es editar se muestra el contenido en sus respectivos textfields, radios, etc
-    // Si se da a OK que de una senal de mostrar toda la tabla de nuevo desde la principal, asi que
-    // habra que pasar el objeto tambien previamente? mas o menos es la idea
+    
+    // Comprobar que un juego no existe ya antes de anadirlo (no en base al nombre, porque yo tengo varios repes
+    // en diferentes plataformas, pero si en base a si TO DO coincide... un equals?)
 }

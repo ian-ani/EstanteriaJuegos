@@ -19,7 +19,7 @@ public class VentanaPrincipal {
     /* ATRIBUTOS */
 
     // Ventana secundaria
-    private DetalleJuego detalleJuegoWindow;
+    //private DetalleJuego detalleJuegoWindow;
 
     // Variables de GestionJuegos
     private JPanel panelGeneral;
@@ -72,6 +72,7 @@ public class VentanaPrincipal {
                     int filaModelo = tabla.convertRowIndexToModel(fila);
                     juegoSeleccionado = juegos.get(filaModelo);
                     eliminarButton.setEnabled(true);
+                    verButton.setEnabled(true);
                 }
             }
         });
@@ -116,6 +117,17 @@ public class VentanaPrincipal {
                 crearTabla(juegos);
             }
         });
+
+        // Ver registro seleccionado y permite editar en la nueva ventana de dialogo
+        verButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ver();
+
+                // Volver a mostrar la tabla
+                crearTabla(juegos);
+            }
+        });
     }
 
     /* GETTERS */
@@ -136,6 +148,10 @@ public class VentanaPrincipal {
                 Valoracion.GUSTADO, "Comentario muuuuuuuuuuuuuuuuuuuuuy largo."));
         juegos.get(1).anadirEtiqueta("point n click");
         juegos.get(1).anadirEtiqueta("puzzles");
+
+        juegos.add(new Juego("Ninja Gaiden Sigma", "PlayStation 3", Estado.PENDIENTE,
+                Valoracion.NO_VALORADO, "Cosas."));
+        juegos.get(2).anadirEtiqueta("hack n slash");
     }
 
     private void crearTabla(List<Juego> lista) {
@@ -170,17 +186,12 @@ public class VentanaPrincipal {
     }
 
     private void anadir() {
-        if (detalleJuegoWindow == null) {
-            detalleJuegoWindow = new DetalleJuego();
+        DetalleJuego detalleJuegoWindow = new DetalleJuego(null, DetalleJuego.Modo.CREAR);
 
-            detalleJuegoWindow.setTitle("Añadir juego...");
-
-            detalleJuegoWindow.setSize(kANCHO_VENTANA, kALTO_VENTANA);
-
-            detalleJuegoWindow.setResizable(false);
-
-            detalleJuegoWindow.setLocationRelativeTo(null);
-        }
+        detalleJuegoWindow.setTitle("Añadir juego...");
+        detalleJuegoWindow.setSize(kANCHO_VENTANA, kALTO_VENTANA);
+        detalleJuegoWindow.setResizable(false);
+        detalleJuegoWindow.setLocationRelativeTo(null);
 
         detalleJuegoWindow.setOnJuegoCreado((juego) -> {
                 juegos.add(juego);
@@ -207,7 +218,14 @@ public class VentanaPrincipal {
     }
 
     private void ver() {
+        DetalleJuego detalleJuegoWindow = new DetalleJuego(juegoSeleccionado, DetalleJuego.Modo.VER);
 
+        detalleJuegoWindow.setTitle("Ver juego...");
+        detalleJuegoWindow.setSize(kANCHO_VENTANA, kALTO_VENTANA);
+        detalleJuegoWindow.setResizable(false);
+        detalleJuegoWindow.setLocationRelativeTo(null);
+
+        detalleJuegoWindow.setVisible(true);
     }
 
     private boolean buscar(String nombre) {
@@ -231,6 +249,11 @@ public class VentanaPrincipal {
     private void reiniciar() {
         busquedaEntrada.setText("");
         crearTabla(juegos);
+
+        // TODO Funciona a medias, esto es una nyapa debe haber algo mejor...
+
+        /*eliminarButton.setEnabled(false);
+        verButton.setEnabled(false);*/
     }
 
     // Guardar juegos en archivo para persistencia!
