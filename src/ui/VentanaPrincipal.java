@@ -18,9 +18,6 @@ import static config.UIConstantes.*;
 public class VentanaPrincipal {
     /* ATRIBUTOS */
 
-    // Ventana secundaria
-    //private DetalleJuego detalleJuegoWindow;
-
     // Variables de GestionJuegos
     private JPanel panelGeneral;
     private JPanel busquedaPanel;
@@ -186,7 +183,7 @@ public class VentanaPrincipal {
     }
 
     private void anadir() {
-        DetalleJuego detalleJuegoWindow = new DetalleJuego(null, DetalleJuego.Modo.CREAR);
+        DetalleJuego detalleJuegoWindow = new DetalleJuego(juegos, null, DetalleJuego.Modo.CREAR);
 
         detalleJuegoWindow.setTitle("Añadir juego...");
         detalleJuegoWindow.setSize(kANCHO_VENTANA, kALTO_VENTANA);
@@ -194,8 +191,10 @@ public class VentanaPrincipal {
         detalleJuegoWindow.setLocationRelativeTo(null);
 
         detalleJuegoWindow.setOnJuegoCreado((juego) -> {
-                juegos.add(juego);
-                crearTabla(juegos);
+                if (!juegos.contains(juego)) {
+                    juegos.add(juego);
+                    crearTabla(juegos);
+                }
             }
         );
 
@@ -218,7 +217,7 @@ public class VentanaPrincipal {
     }
 
     private void ver() {
-        DetalleJuego detalleJuegoWindow = new DetalleJuego(juegoSeleccionado, DetalleJuego.Modo.VER);
+        DetalleJuego detalleJuegoWindow = new DetalleJuego(juegos, juegoSeleccionado, DetalleJuego.Modo.VER);
 
         detalleJuegoWindow.setTitle("Ver juego...");
         detalleJuegoWindow.setSize(kANCHO_VENTANA, kALTO_VENTANA);

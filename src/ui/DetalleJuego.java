@@ -8,6 +8,7 @@ import utiles.Mensaje;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -16,6 +17,7 @@ public class DetalleJuego extends JDialog {
     private Set<String> etiquetasTmp = new HashSet<>();
     private Consumer<Juego> onJuegoCreado; // callback consumer
 
+    private List<Juego> juegos;
     private Juego juegoSeleccionado;
     private Modo modoSeleccionado;
 
@@ -58,7 +60,8 @@ public class DetalleJuego extends JDialog {
         VER, CREAR;
     }
 
-    public DetalleJuego(Juego juegoSeleccionado, Modo modo) {
+    public DetalleJuego(List<Juego> juegos, Juego juegoSeleccionado, Modo modo) {
+        this.juegos = juegos;
         this.juegoSeleccionado = juegoSeleccionado;
         this.modoSeleccionado = modo;
 
@@ -320,17 +323,43 @@ public class DetalleJuego extends JDialog {
         return juego;
     }
 
+    private boolean verificarJuegoExistente(String nombre, String plataforma) {
+        for (Juego juego: juegos) {
+            if (juego.getNombre().equalsIgnoreCase(nombre) && juego.getPlataforma().equalsIgnoreCase(plataforma)) {
+                //System.out.println("El juego ya existe.");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // Modificar juego si se ha abierto desde 'ver'
     private void modificarJuego() {
-        juegoSeleccionado.setNombre(nombreEntrada.getText());
-        juegoSeleccionado.setPlataforma(plataformaEntrada.getText());
-        juegoSeleccionado.setEstado(Estado.valueOf(getRadio(estadoPanel)));
-        juegoSeleccionado.setValoracion(Valoracion.valueOf(getRadio(valoracionPanel)));
-        juegoSeleccionado.setNotas(notasEntrada.getText());
+        // Extraer los dos datos para la verificacion de un juego existente
+        String nombre = nombreEntrada.getText();
+        String plataforma = plataformaEntrada.getText();
 
-        // Anadir etiquetas guardadas temporalmente en 'etiquetasTmp'
-        for (String e: etiquetasTmp) {
-            juegoSeleccionado.anadirEtiqueta(e);
+        // Verificar si el juego existe (y no efectuar los cambios si es asi)
+        boolean existente = verificarJuegoExistente(nombre, plataforma);
+
+        if (!existente) {
+            // Cambiar datos
+            juegoSeleccionado.setNombre(nombre);
+            juegoSeleccionado.setPlataforma(plataforma);
+            juegoSeleccionado.setEstado(Estado.valueOf(getRadio(estadoPanel)));
+            juegoSeleccionado.setValoracion(Valoracion.valueOf(getRadio(valoracionPanel)));
+            juegoSeleccionado.setNotas(notasEntrada.getText());
+
+            // Anadir etiquetas guardadas temporalmente en 'etiquetasTmp'
+            for (String e: etiquetasTmp) {
+                juegoSeleccionado.anadirEtiqueta(e);
+            }
+
+            Mensaje.mostrarMensajeInfo("Juego modificado", "El juego se ha modificado correctamente.");
+        } else {
+            Mensaje.mostrarMensajePeligro("Juego ya existe",
+                    "El juego ya coincide en nombre y plataforma con otro juego.");
         }
     }
 
@@ -366,7 +395,4 @@ public class DetalleJuego extends JDialog {
     public void setOnJuegoCreado(Consumer<Juego> c) {
         this.onJuegoCreado = c;
     }
-
-    // Comprobar que un juego no existe ya antes de anadirlo (no en base al nombre, porque yo tengo varios repes
-    // en diferentes plataformas, pero si en base a si TO DO coincide... un equals?)
 }

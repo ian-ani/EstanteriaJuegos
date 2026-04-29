@@ -118,15 +118,11 @@ public class Juego {
     public boolean equals(Object o) {
         if (!(o instanceof Juego juego)) return false;
         return Objects.equals(nombre, juego.nombre) &&
-                Objects.equals(plataforma, juego.plataforma) &&
-                Objects.equals(estado, juego.estado) &&
-                Objects.equals(etiquetas, juego.etiquetas) &&
-                Objects.equals(valoracion, juego.valoracion) &&
-                Objects.equals(notas, juego.notas);
+                Objects.equals(plataforma, juego.plataforma);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nombre, plataforma, estado, etiquetas, valoracion, notas);
+        return Objects.hash(nombre, plataforma);
     }
 }
