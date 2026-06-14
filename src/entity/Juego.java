@@ -1,4 +1,4 @@
-package modelo;
+package entity;
 
 import java.util.HashSet;
 import java.util.Objects;
