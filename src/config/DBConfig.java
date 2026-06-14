@@ -8,17 +8,16 @@ public record DBConfig(
         String pass
 ) {
     public String url() {
-        return "jdbc:sqlserver://" + host + ":" + port + ";databaseName=" +
-                dbName + ";encrypt=true;trustServerCertificate=true";
+        return "jdbc:mysql://" + host + ":" + port + "/" + dbName + "?serverTimezone=UTC";
     }
 
     public static DBConfig defaultConfig() {
         return new DBConfig(
                 "localhost",
-                "1433",
-                "hospital",
-                "sa",
-                "Password123"
+                "3306",
+                "CAMBIAR",
+                "root",
+                ""
         );
     }
 }
