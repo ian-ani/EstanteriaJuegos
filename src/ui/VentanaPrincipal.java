@@ -1,9 +1,11 @@
 package ui;
 
-import modelo.Estado;
-import modelo.Juego;
-import modelo.Valoracion;
-import utiles.Mensaje;
+import entity.Estado;
+import entity.Juego;
+import entity.Valoracion;
+import ui.dialog.DetalleJuego;
+import util.General;
+import util.Mensaje;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -40,20 +42,31 @@ public class VentanaPrincipal {
 
     // Lista donde se van a guardar los juegos temporalmente
     List<Juego> juegos = new ArrayList<>();
+    List<Juego> juegosMostrados = new ArrayList<>();
 
     /* CONSTRUCTOR */
 
     public VentanaPrincipal() {
-        // TODO borrar test
-        test();
-
-        crearTabla(juegos);
+        // Inicializacion de propiedades
+        init();
 
         // Llama a la ventana de 'anadir juego'
         anadirButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 anadir();
+            }
+        });
+
+        // Ver registro seleccionado y permite editar en la nueva ventana de dialogo
+        verButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ver();
+                General.bloquearBotones(juegoBotonPanel, false, anadirButton);
+
+                // Volver a mostrar la tabla
+                //crearTabla(juegos);
             }
         });
 
@@ -67,9 +80,8 @@ public class VentanaPrincipal {
 
                 if (e.getClickCount() != -1 && tabla.getSelectedRow() != -1 && fila != -1) {
                     int filaModelo = tabla.convertRowIndexToModel(fila);
-                    juegoSeleccionado = juegos.get(filaModelo);
-                    eliminarButton.setEnabled(true);
-                    verButton.setEnabled(true);
+                    juegoSeleccionado = juegosMostrados.get(filaModelo);
+                    General.bloquearBotones(juegoBotonPanel, true, anadirButton);
                 }
             }
         });
@@ -79,12 +91,22 @@ public class VentanaPrincipal {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    boolean encontrado = buscar(busquedaEntrada.getText());
+                    // Si esta vacio, early return
+                    if (busquedaEntrada.getText().isBlank()) return;
 
-                    if (!encontrado) Mensaje.mostrarMensajeError(
-                            "No encontrado",
-                            "No se ha encontrado ningún juego con ese nombre."
-                    );
+                    // Si no esta vacio, buscar
+                    boolean encontrado = buscar(busquedaEntrada.getText().trim());
+
+                    if (!encontrado) {
+                        Mensaje.mostrarMensajeError(
+                                "No encontrado",
+                                "No se ha encontrado ningún juego con ese nombre."
+                        );
+                    } else {
+                        if (juegoSeleccionado != null) {
+                            General.bloquearBotones(juegoBotonPanel, true, anadirButton);
+                        }
+                    }
                 }
             }
         });
@@ -111,18 +133,11 @@ public class VentanaPrincipal {
                 else Mensaje.mostrarMensajeError("Juego no borrado", "No se ha podido borrar el juego seleccionado.");
 
                 // Volver a mostrar la tabla
-                crearTabla(juegos);
-            }
-        });
+                juegosMostrados = juegos;
+                crearTabla(juegosMostrados);
 
-        // Ver registro seleccionado y permite editar en la nueva ventana de dialogo
-        verButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ver();
-
-                // Volver a mostrar la tabla
-                crearTabla(juegos);
+                // Bloquear botones
+                General.bloquearBotones(juegoBotonPanel, false, anadirButton);
             }
         });
     }
@@ -134,6 +149,21 @@ public class VentanaPrincipal {
     }
 
     /* OTROS METODOS */
+
+    private void init() {
+        // TODO obtener registros desde la base de datos
+
+        // TODO borrar test
+        test();
+
+        juegosMostrados = juegos;
+
+        // Propiedades
+        crearTabla(juegos);
+
+        // Bloquear botones de eliminar y editar hasta que haya un juego seleccionado
+        General.bloquearBotones(juegoBotonPanel, false, anadirButton);
+    }
 
     // TODO borrar luego!!
     private void test() {
@@ -152,34 +182,30 @@ public class VentanaPrincipal {
     }
 
     private void crearTabla(List<Juego> lista) {
-        // Matriz de datos para guardar los juegos
-        Object[][] datos = new Object[lista.size()][6];
+        juegoSeleccionado = null;
 
-        // Fila
-        for (int i = 0; i < datos.length; i++) {
-            // Columna
-            for (int j = 0; j < datos[0].length; j++) {
-                datos[i][0] = lista.get(i).getNombre();
-                datos[i][1] = lista.get(i).getPlataforma();
-                datos[i][2] = lista.get(i).getEstado();
-                datos[i][3] = lista.get(i).getEtiquetas();
-                datos[i][4] = lista.get(i).getValoracion();
-                datos[i][5] = lista.get(i).getNotas();
-            }
+        Object[][] datos = new Object[lista.size()][6];
+        String[] columnas = new String[]{"Nombre", "Plataforma", "Estado", "Etiquetas", "Valoración", "Comentarios"};
+
+        // Recorrer y guardar datos de los juegos en la tabla
+        for (int i = 0; i < lista.size(); i++) {
+            Juego juego = lista.get(i);
+
+            datos[i][0] = juego.getNombre();
+            datos[i][1] = juego.getPlataforma();
+            datos[i][2] = juego.getEstado();
+            datos[i][3] = juego.getEtiquetas();
+            datos[i][4] = juego.getValoracion();
+            datos[i][5] = juego.getNotas();
         }
 
         // Crear tabla: datos y cabecera
-        tabla.setModel(new DefaultTableModel(
-                datos,
-                new String[]{
-                        "Nombre",
-                        "Plataforma",
-                        "Estado",
-                        "Etiquetas",
-                        "Valoración",
-                        "Comentarios",
-                }
-        ));
+        tabla.setModel(new DefaultTableModel(datos, columnas) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
     }
 
     private void anadir() {
@@ -190,10 +216,12 @@ public class VentanaPrincipal {
         detalleJuegoWindow.setResizable(false);
         detalleJuegoWindow.setLocationRelativeTo(null);
 
+        // callback
         detalleJuegoWindow.setOnJuegoCreado((juego) -> {
                 if (!juegos.contains(juego)) {
                     juegos.add(juego);
-                    crearTabla(juegos);
+                    juegosMostrados = juegos;
+                    crearTabla(juegosMostrados);
                 }
             }
         );
@@ -202,18 +230,36 @@ public class VentanaPrincipal {
     }
 
     private boolean eliminar() {
-        try {
-            // Borrar juego
-            juegos.remove(juegoSeleccionado);
+        // Traducir texto de los botoners de 'SI' y 'NO'
+        UIManager.put("OptionPane.yesButtonText", "Sí");
+        UIManager.put("OptionPane.noButtonText", "No");
 
-            // Desactivar boton de eliminar
-            eliminarButton.setEnabled(false);
+        // Mostrar una ventana de confirmacion
+        int respuesta = JOptionPane.showConfirmDialog(
+                null,
+                "¿Estás seguro de querer borrar el juego " + juegoSeleccionado.getNombre() + "?",
+                "Confirmar borrado",
+                JOptionPane.YES_NO_OPTION
+        );
 
-            return true;
-        } catch (Exception e) {
-            System.err.println("No se ha podido borrar el juego seleccionado: " + e.getMessage());
-            return false;
+        // Si la respuesta es 'SI', entonces borrar el juego actual
+        if (respuesta == JOptionPane.YES_OPTION) {
+            // TODO esto luego hay que cambiarlo incluyendo el DataManager
+            try {
+                // Borrar juego
+                juegos.remove(juegoSeleccionado);
+
+                // Desactivar boton de eliminar y editar
+                //General.bloquearBotones(juegoBotonPanel, false, anadirButton);
+
+                return true;
+            } catch (Exception e) {
+                System.err.println("No se ha podido borrar el juego seleccionado: " + e.getMessage());
+                return false;
+            }
         }
+
+        return false;
     }
 
     private void ver() {
@@ -225,10 +271,17 @@ public class VentanaPrincipal {
         detalleJuegoWindow.setLocationRelativeTo(null);
 
         detalleJuegoWindow.setVisible(true);
+
+        //juegosMostrados = juegos;
+        //crearTabla(juegosMostrados);
     }
 
-    private boolean buscar(String nombre) {
+    private boolean buscarNombre(String nombre) {
+        // TODO luego se pasa a DataManager
         List<Juego> tmp = new ArrayList<>();
+
+        // Si la lista esta vacia
+        //if (tmp == null || tmp.isEmpty()) return false;
 
         for (Juego j: juegos) {
             if (j.getNombre().toLowerCase().contains(nombre.toLowerCase())) {
@@ -239,20 +292,40 @@ public class VentanaPrincipal {
         // Ordenar ascendentemente antes de mostrar
         tmp.sort(Comparator.comparing(Juego::getNombre));
 
-        // Muestra de nuevo la tabla con los datos coincidentes
-        crearTabla(tmp);
+        // Mostrar resultados en la tabla
+        juegosMostrados = tmp;
+        crearTabla(juegosMostrados);
 
         return !tmp.isEmpty();
     }
 
+    private boolean buscar(String nombre) {
+        // TODO se pueden anadir busquedas por mas campos, no es dificil, lo puedo hacer como el ejercicio del hospital
+
+        // Volver a bloquear botones de edicion y borrado
+        General.bloquearBotones(juegoBotonPanel, false, anadirButton);
+        // TODO no se si esto va a ser realmente necesario en este caso
+
+        // Buscar por nombre
+        // TODO poner mas filtros y separar con condicionales
+        return buscarNombre(nombre);
+    }
+
     private void reiniciar() {
         busquedaEntrada.setText("");
-        crearTabla(juegos);
+
+        juegosMostrados = juegos;
+        crearTabla(juegosMostrados);
+
+        General.bloquearBotones(juegoBotonPanel, false, anadirButton);
     }
 
     // Guardar juegos en archivo para persistencia!
     // Anadir busqueda por mas campos
     // Seguramente pulsando a algo de la cabecera podria filtrar por asc desc en base a esa columna?
     // Anadir icono del programa
-    // Si no hay nada seleccionado, deberian bloquearse 'borrar' y 'ver', eso sigue mal
+    // Borrar los sout, poner un logger cuando haya base de datos
+    // Pasar nombres al ingles :) lo mismo podria poner un archivo de localizacion tambien!
+    // Pasar la logica a 'service', dejar aqui solo la de presentacion como crearTabla, bloquearBotones, etc
+    // y pasar a service la creacion, edicion, etc y llamarla desde aqui
 }
