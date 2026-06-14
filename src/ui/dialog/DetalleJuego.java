@@ -1,9 +1,9 @@
-package ui;
+package ui.dialog;
 
-import modelo.Estado;
-import modelo.Juego;
-import modelo.Valoracion;
-import utiles.Mensaje;
+import entity.Estado;
+import entity.Juego;
+import entity.Valoracion;
+import util.Mensaje;
 
 import javax.swing.*;
 import java.awt.*;
