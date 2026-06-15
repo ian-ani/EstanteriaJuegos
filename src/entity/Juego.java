@@ -8,6 +8,7 @@ public class Juego {
 
     /* ATRIBUTOS */
 
+    private int id;
     private String nombre;
     private String plataforma;
     private Estado estado;
@@ -19,7 +20,8 @@ public class Juego {
 
     /* CONSTRUCTOR */
 
-    public Juego(String nombre, String plataforma, Estado estado, Valoracion valoracion, String notas) {
+    public Juego(int id, String nombre, String plataforma, Estado estado, Valoracion valoracion, String notas) {
+        setId(id);
         setNombre(nombre);
         setPlataforma(plataforma);
         setEstado(estado);
@@ -29,6 +31,10 @@ public class Juego {
     }
 
     /* GETTERS */
+
+    public int getId() {
+        return id;
+    }
 
     public String getNombre() {
         return nombre;
@@ -56,6 +62,14 @@ public class Juego {
 
     /* SETTERS */
 
+    private void setId(int id) {
+        if (id < 0) {
+            throw new IllegalArgumentException("El índice del juego no puede ser inferior a 0.");
+        }
+
+        this.id = id;
+    }
+
     public void setNombre(String nombre) {
         if (nombre == null || nombre.isBlank()) {
             throw new IllegalArgumentException("No puedes registrar un juego sin nombre.");
@@ -78,6 +92,12 @@ public class Juego {
         }
 
         this.estado = estado;
+    }
+
+    public void setEtiquetas(Set<String> etiquetas) {
+        this.etiquetas = (etiquetas != null)
+                ? new HashSet<>(etiquetas)
+                : new HashSet<>();
     }
 
     public void anadirEtiqueta(String etiqueta) {
@@ -107,9 +127,9 @@ public class Juego {
     @Override
     public String toString() {
         return String.format("""
-                === %s ===
+                === %s (%d) ===
                 Plataforma: %s | Estado: %s | Etiquetas: %s | Valoración: %s | Notas: %s
-                """, nombre, plataforma, estado, etiquetas, valoracion, notas);
+                """, nombre, id, plataforma, estado, etiquetas, valoracion, notas);
     }
 
     /* METODO EQUALS */

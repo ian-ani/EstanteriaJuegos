@@ -396,3 +396,5 @@ public class DetalleJuego extends JDialog {
         this.onJuegoCreado = c;
     }
 }
+
+// TODO bug donde al anadir una etiqueta, si se borra luego no se puede volver a anadir?
