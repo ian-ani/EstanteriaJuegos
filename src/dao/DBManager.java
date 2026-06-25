@@ -3,6 +3,7 @@ package dao;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import config.DBConfig;
+import config.DBType;
 import entity.Estado;
 import entity.Juego;
 import entity.Valoracion;
@@ -38,7 +39,7 @@ public class DBManager {
     public static boolean loadDriver() {
         try {
             kLOGGER.log(Level.INFO, "Cargando driver...");
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName(DBConfig.defaultConfig(DBType.SQLITE).driver());
             kLOGGER.log(Level.INFO, "OK!");
             return true;
         } catch (ClassNotFoundException e) {
@@ -55,10 +56,14 @@ public class DBManager {
         try {
             kLOGGER.log(Level.INFO, "Conectando a la base de datos...");
 
+            /*conn = DriverManager.getConnection(
+                    DBConfig.defaultConfig(DBType.MYSQL).url(),
+                    DBConfig.defaultConfig(DBType.MYSQL).user(),
+                    DBConfig.defaultConfig(DBType.MYSQL).pass()
+            );*/
+
             conn = DriverManager.getConnection(
-                    DBConfig.defaultConfig().url(),
-                    DBConfig.defaultConfig().user(),
-                    DBConfig.defaultConfig().pass()
+                    DBConfig.defaultConfig(DBType.SQLITE).sqliteUrl()
             );
 
             kLOGGER.log(Level.INFO, kDB_MSQ_CONN_OK);
@@ -115,7 +120,6 @@ public class DBManager {
         } catch (SQLException e) {
             kLOGGER.log(Level.SEVERE, "No se han podido obtener los juegos.", e);
         }
-
 
         return games;
     }
