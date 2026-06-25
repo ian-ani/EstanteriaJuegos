@@ -144,6 +144,25 @@ public class DBManager {
         return games;
     }
 
+    // Obtener juegos por plataforma
+    public static List<Juego> selectGameByPlatform(String name) throws SQLException {
+        List<Juego> games = new ArrayList<>();
+        String query = GameQueries.kGET_GAME_BY_PLATFORM;
+
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, "%" + name + "%");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                games.add(buildGame(rs));
+            }
+        } catch (SQLException e) {
+            kLOGGER.log(Level.SEVERE, "No se ha podido obtener el juego.", e);
+        }
+
+        return games;
+    }
+
     // Insertar nuevo juego
     public static boolean insertGame(Juego game) {
         kLOGGER.log(Level.INFO, String.format("Insertando juego \n%s...\n", game));

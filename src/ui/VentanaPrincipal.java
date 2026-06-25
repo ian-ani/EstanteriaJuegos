@@ -1,9 +1,7 @@
 package ui;
 
 import dao.DataManager;
-import entity.Estado;
 import entity.Juego;
-import entity.Valoracion;
 import ui.dialog.DetalleJuego;
 import util.General;
 import util.Mensaje;
@@ -31,12 +29,12 @@ public class VentanaPrincipal {
     private JButton anadirButton;
     private JScrollPane tablaPanel;
     private JTextField busquedaEntrada;
-    private JLabel busquedaLabel;
     private JTable tabla;
     private JPanel juegoBotonPanel;
     private JPanel persistenciaPanel;
-    private JButton Guardar;
+    private JButton exportarButton;
     private JButton reiniciarButton;
+    private JComboBox filtroComboBox;
 
     // Juego seleccionado
     Juego juegoSeleccionado;
@@ -103,7 +101,7 @@ public class VentanaPrincipal {
                     if (!encontrado) {
                         Mensaje.mostrarMensajeError(
                                 "No encontrado",
-                                "No se ha encontrado ningún juego con ese nombre."
+                                "No se ha encontrado ningún juego bajo ese criterio."
                         );
                     } else {
                         if (juegoSeleccionado != null) {
@@ -143,6 +141,14 @@ public class VentanaPrincipal {
                 General.bloquearBotones(juegoBotonPanel, false, anadirButton);
             }
         });
+
+        // Exportar a CSV
+        exportarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO
+            }
+        });
     }
 
     /* GETTERS */
@@ -157,30 +163,22 @@ public class VentanaPrincipal {
         // Obtener registros
         juegos = DataManager.getGames();
 
-        juegosMostrados = juegos;
-
         // Propiedades
+        initComboBox();
+
+        // Mostrar juegos
+        juegosMostrados = juegos;
         crearTabla(juegos);
 
         // Bloquear botones de eliminar y editar hasta que haya un juego seleccionado
         General.bloquearBotones(juegoBotonPanel, false, anadirButton);
     }
 
-    // TODO borrar luego!!
-    /*private void test() {
-        juegos.add(new Juego(0, "Diablo III", "PlayStation 3", Estado.COMPLETADO,
-                Valoracion.GUSTADO, "Cosas."));
-        juegos.get(0).anadirEtiqueta("arpg");
-
-        juegos.add(new Juego(0,"The Longest Journey", "PC", Estado.COMPLETADO,
-                Valoracion.GUSTADO, "Comentario muuuuuuuuuuuuuuuuuuuuuy largo."));
-        juegos.get(1).anadirEtiqueta("point n click");
-        juegos.get(1).anadirEtiqueta("puzzles");
-
-        juegos.add(new Juego(0,"Ninja Gaiden Sigma", "PlayStation 3", Estado.PENDIENTE,
-                Valoracion.NO_VALORADO, "Cosas."));
-        juegos.get(2).anadirEtiqueta("hack n slash");
-    }*/
+    private void initComboBox() {
+        filtroComboBox.setModel(new DefaultComboBoxModel<>(
+                new String[] {"Nombre", "Plataforma"}
+        ));
+    }
 
     private void crearTabla(List<Juego> lista) {
         juegoSeleccionado = null;
@@ -274,17 +272,10 @@ public class VentanaPrincipal {
     }
 
     private boolean buscarNombre(String nombre) {
-        // TODO luego se pasa a DataManager
-        List<Juego> tmp = new ArrayList<>();
+        List<Juego> tmp = DataManager.selectGameByName(nombre);
 
         // Si la lista esta vacia
-        //if (tmp == null || tmp.isEmpty()) return false;
-
-        for (Juego j: juegos) {
-            if (j.getNombre().toLowerCase().contains(nombre.toLowerCase())) {
-                tmp.add(j);
-            }
-        }
+        if (tmp == null || tmp.isEmpty()) return false;
 
         // Ordenar ascendentemente antes de mostrar
         tmp.sort(Comparator.comparing(Juego::getNombre));
@@ -296,16 +287,38 @@ public class VentanaPrincipal {
         return !tmp.isEmpty();
     }
 
+    private boolean buscarPlataforma(String nombre) {
+        // TODO luego se pasa a DataManager
+        List<Juego> tmp = DataManager.selectGameByPlatform(nombre);
+
+        // Si la lista esta vacia
+        if (tmp == null || tmp.isEmpty()) return false;
+
+        // Ordenar ascendentemente antes de mostrar
+        tmp.sort(Comparator.comparing(Juego::getPlataforma));
+
+        // Mostrar resultados en la tabla
+        juegosMostrados = tmp;
+        crearTabla(juegosMostrados);
+
+        return !tmp.isEmpty();
+    }
+
     private boolean buscar(String nombre) {
-        // TODO se pueden anadir busquedas por mas campos, no es dificil, lo puedo hacer como el ejercicio del hospital
+        // Obtener criterio de busqueda
+        String filtro = (String) filtroComboBox.getSelectedItem();
 
         // Volver a bloquear botones de edicion y borrado
         General.bloquearBotones(juegoBotonPanel, false, anadirButton);
-        // TODO no se si esto va a ser realmente necesario en este caso
 
-        // Buscar por nombre
-        // TODO poner mas filtros y separar con condicionales
-        return buscarNombre(nombre);
+        // Busqueda segun criterio
+        if ("Nombre".equals(filtro)) {
+            return buscarNombre(nombre);
+        } else if ("Plataforma".equals(filtro)) {
+            return buscarPlataforma(nombre);
+        }
+
+        return false;
     }
 
     private void reiniciar() {
@@ -320,13 +333,15 @@ public class VentanaPrincipal {
         General.bloquearBotones(juegoBotonPanel, false, anadirButton);
     }
 
-    // Guardar juegos en archivo para persistencia!
     // Anadir busqueda por mas campos
     // Seguramente pulsando a algo de la cabecera podria filtrar por asc desc en base a esa columna?
     // Anadir icono del programa
-    // Borrar los sout, poner un logger cuando haya base de datos
     // Pasar nombres al ingles :) lo mismo podria poner un archivo de localizacion tambien!
     // Pasar la logica a 'service', dejar aqui solo la de presentacion como crearTabla, bloquearBotones, etc
     // y pasar a service la creacion, edicion, etc y llamarla desde aqui
     // Anadir documentacion con javadoc
+    // Exportar a CSV que no deberia de ser muy dificil
+    // Validaciones??
+    // Personalizacion?? Aunque eso es lo de menos
+    // Algunas partes del codigo (obviando comentarios) estan en un idioma y otras en otro, pasar todas al ingles
 }

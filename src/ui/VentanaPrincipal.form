@@ -24,14 +24,6 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="8f6b6" class="javax.swing.JLabel" binding="busquedaLabel">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Búsqueda:"/>
-                </properties>
-              </component>
               <component id="41d1d" class="javax.swing.JTextField" binding="busquedaEntrada">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -47,6 +39,12 @@
                 <properties>
                   <text value="Reiniciar"/>
                 </properties>
+              </component>
+              <component id="d4f5e" class="javax.swing.JComboBox" binding="filtroComboBox">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
               </component>
             </children>
           </grid>
@@ -119,13 +117,13 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="545a8" class="javax.swing.JButton" binding="Guardar">
+              <component id="545a8" class="javax.swing.JButton" binding="exportarButton">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <enabled value="true"/>
-                  <text value="Guardar"/>
+                  <text value="Exportar CSV"/>
                 </properties>
               </component>
             </children>

@@ -43,6 +43,22 @@ public class DataManager {
         return new ArrayList<>();
     }
 
+    // Obtener juegos por plataforma
+    public static List<Juego> selectGameByPlatform(String name) {
+        if (DBManager.loadDriver() && DBManager.connect()) {
+            try {
+                return DBManager.selectGameByPlatform(name);
+            } catch (SQLException e) {
+                kLOGGER.log(Level.WARNING, "Ha habido un error intentando obtener un juego con esa plataforma.");
+                return new ArrayList<>();
+            } finally {
+                DBManager.close();
+            }
+        }
+
+        return new ArrayList<>();
+    }
+
     // Insertar nuevo juego
     public static boolean insertGame(Juego game) {
         if (DBManager.connect() && DBManager.insertGame(game)) {
