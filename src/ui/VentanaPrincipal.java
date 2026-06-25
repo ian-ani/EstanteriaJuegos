@@ -167,16 +167,16 @@ public class VentanaPrincipal {
 
     // TODO borrar luego!!
     private void test() {
-        juegos.add(new Juego("Diablo III", "PlayStation 3", Estado.COMPLETADO,
+        juegos.add(new Juego(0, "Diablo III", "PlayStation 3", Estado.COMPLETADO,
                 Valoracion.GUSTADO, "Cosas."));
         juegos.get(0).anadirEtiqueta("arpg");
 
-        juegos.add(new Juego("The Longest Journey", "PC", Estado.COMPLETADO,
+        juegos.add(new Juego(0,"The Longest Journey", "PC", Estado.COMPLETADO,
                 Valoracion.GUSTADO, "Comentario muuuuuuuuuuuuuuuuuuuuuy largo."));
         juegos.get(1).anadirEtiqueta("point n click");
         juegos.get(1).anadirEtiqueta("puzzles");
 
-        juegos.add(new Juego("Ninja Gaiden Sigma", "PlayStation 3", Estado.PENDIENTE,
+        juegos.add(new Juego(0,"Ninja Gaiden Sigma", "PlayStation 3", Estado.PENDIENTE,
                 Valoracion.NO_VALORADO, "Cosas."));
         juegos.get(2).anadirEtiqueta("hack n slash");
     }
@@ -328,4 +328,5 @@ public class VentanaPrincipal {
     // Pasar nombres al ingles :) lo mismo podria poner un archivo de localizacion tambien!
     // Pasar la logica a 'service', dejar aqui solo la de presentacion como crearTabla, bloquearBotones, etc
     // y pasar a service la creacion, edicion, etc y llamarla desde aqui
+    // Anadir documentacion con javadoc
 }
