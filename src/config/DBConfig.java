@@ -5,19 +5,37 @@ public record DBConfig(
         String port,
         String dbName,
         String user,
-        String pass
+        String pass,
+        String driver
 ) {
-    public String url() {
+    public String mySqlUrl() {
         return "jdbc:mysql://" + host + ":" + port + "/" + dbName + "?serverTimezone=UTC";
     }
 
-    public static DBConfig defaultConfig() {
-        return new DBConfig(
-                "localhost",
-                "3306",
-                "CAMBIAR",
-                "root",
-                ""
-        );
+    public String sqliteUrl() {
+        return "jdbc:sqlite:db/" + dbName;
+    }
+
+    public static DBConfig defaultConfig(DBType type) {
+        return switch (type) {
+            case DBType.MYSQL ->
+                new DBConfig(
+                        "localhost",
+                        "3306",
+                        "juegos",
+                        "root",
+                        "",
+                        "com.mysql.cj.jdbc.Driver"
+                );
+            case DBType.SQLITE ->
+                new DBConfig(
+                        "",
+                        "",
+                        "juegos.db",
+                        "",
+                        "",
+                        "org.sqlite.JDBC"
+                );
+        };
     }
 }
