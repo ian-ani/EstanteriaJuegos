@@ -1,6 +1,8 @@
 package ui.dialog;
 
+import dao.DataManager;
 import entity.Estado;
+import entity.Etiqueta;
 import entity.Juego;
 import entity.Valoracion;
 import util.Mensaje;
@@ -14,7 +16,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class DetalleJuego extends JDialog {
-    private Set<String> etiquetasTmp = new HashSet<>();
+    //private Set<Etiqueta> etiquetasTmp = new HashSet<>();
     private Consumer<Juego> onJuegoCreado; // callback consumer
 
     private List<Juego> juegos;
@@ -134,29 +136,40 @@ public class DetalleJuego extends JDialog {
         panel.repaint();
     }
 
-    private void crearPanelEtiqueta(String _etiqueta) {
-        // Si la etiqueta ya existe, no continuar
-        if (etiquetaExiste(_etiqueta)) return;
+    private void crearPanelEtiqueta(String nombre) {
+        // TODO Si la etiqueta ya existe, no continuar
+        //if (etiquetaExiste(nombre)) return;
+        // Crear etiqueta
+        Etiqueta etiqueta = new Etiqueta(nombre);
+
+        // Guardar etiqueta
+        if (juegoSeleccionado != null) {
+            juegoSeleccionado.anadirEtiqueta(etiqueta);
+        }
+
+        //etiquetasTmp.add(etiqueta);
 
         // Anadir panel
         JPanel panel = new JPanel();
         etiquetasAnadidasPanel.add(panel);
 
         // Anadir texto
-        JTextField etiqueta = new JTextField(_etiqueta);
-        panel.add(etiqueta);
+        JTextField textoEtiqueta = new JTextField(nombre);
+        panel.add(textoEtiqueta);
 
         // Anadir boton
         JButton btn = new JButton("x");
         panel.add(btn);
 
-        // Anadir a la lista
-        etiquetasTmp.add(etiqueta.getText());
-
         // Evento que borra un panel (con su campo de texto y boton)
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // TODO borrar etiqueta (nivel logico)
+                //etiquetasTmp.remove(etiqueta);
+                juegoSeleccionado.getEtiquetas().remove(etiqueta);
+
+                // Borrar etiqueta (nivel visual)
                 etiquetasAnadidasPanel.remove(panel);
 
                 // Redibujar panel
@@ -191,13 +204,13 @@ public class DetalleJuego extends JDialog {
         return campo.getText().trim().length() <= largo;
     }
 
-    private boolean etiquetaExiste(String etiqueta) {
-        for (String e: etiquetasTmp) {
-            if (e.equalsIgnoreCase(etiqueta)) return true;
+    /*private boolean etiquetaExiste(Etiqueta etiqueta) {
+        for (Etiqueta e: etiquetasTmp) {
+            if (e.equals(etiqueta)) return true;
         }
 
         return false;
-    }
+    }*/
 
     // Obtener valor de los radios
     private String getRadio(JPanel panel) {
@@ -268,11 +281,9 @@ public class DetalleJuego extends JDialog {
         marcarRadio(estadoPanel, juegoSeleccionado.getEstado().toString());
         marcarRadio(valoracionPanel, juegoSeleccionado.getValoracion().toString());
 
-        // TODO ahora mismo hay un bug donde si una etiqueta se borra y se quiere anadir, no se anade
-
         // Anadir etiquetas
-        for (String e: juegoSeleccionado.getEtiquetas()) {
-            crearPanelEtiqueta(e);
+        for (Etiqueta e: juegoSeleccionado.getEtiquetas()) {
+            crearPanelEtiqueta(String.valueOf(e));
         }
     }
 
@@ -291,7 +302,7 @@ public class DetalleJuego extends JDialog {
 
         // Eliminar lo referente a etiquetas (campo de texto, vaciar lista, vaciar paneles)
         etiquetaEntrada.setText("");
-        etiquetasTmp.clear();
+        //etiquetasTmp.clear();
         reiniciarEtiquetas(etiquetasAnadidasPanel);
     }
 
@@ -305,6 +316,8 @@ public class DetalleJuego extends JDialog {
 
     // Guardar los datos de campos y radios en Juego
     private Juego crearJuego() {
+        //Set<Etiqueta> tmp = new HashSet<>();
+
         // Obtener campos
         String nombre = nombreEntrada.getText();
         String plataforma = plataformaEntrada.getText();
@@ -313,12 +326,20 @@ public class DetalleJuego extends JDialog {
         String notas = notasEntrada.getText();
 
         // Instanciar juego
-        Juego juego = new Juego(nombre, plataforma, estado, valoracion, notas);
+        Juego juego = new Juego(0, nombre, plataforma, estado, valoracion, notas);
 
-        // Anadir etiquetas guardadas temporalmente en 'etiquetasTmp'
-        for (String e: etiquetasTmp) {
-            juego.anadirEtiqueta(e);
+        // Anadir etiquetas
+        for (Component c: etiquetasAnadidasPanel.getComponents()) {
+            if (c instanceof JPanel panel) {
+                for (Component p: panel.getComponents()) {
+                    if (p instanceof JTextField tf) juego.anadirEtiqueta(new Etiqueta(tf.getText()));
+                }
+            }
         }
+
+        /*for (Etiqueta e: juegoSeleccionado.getEtiquetas()) {
+            juego.anadirEtiqueta(e);
+        }*/
 
         return juego;
     }
@@ -341,25 +362,26 @@ public class DetalleJuego extends JDialog {
         String plataforma = plataformaEntrada.getText();
 
         // Verificar si el juego existe (y no efectuar los cambios si es asi)
-        boolean existente = verificarJuegoExistente(nombre, plataforma);
+        //boolean existente = verificarJuegoExistente(nombre, plataforma);
 
-        if (!existente) {
-            // Cambiar datos
-            juegoSeleccionado.setNombre(nombre);
-            juegoSeleccionado.setPlataforma(plataforma);
-            juegoSeleccionado.setEstado(Estado.valueOf(getRadio(estadoPanel)));
-            juegoSeleccionado.setValoracion(Valoracion.valueOf(getRadio(valoracionPanel)));
-            juegoSeleccionado.setNotas(notasEntrada.getText());
+        // TODO
+        // Cambiar datos
+        juegoSeleccionado.setNombre(nombre);
+        juegoSeleccionado.setPlataforma(plataforma);
+        juegoSeleccionado.setEstado(Estado.valueOf(getRadio(estadoPanel)));
+        juegoSeleccionado.setValoracion(Valoracion.valueOf(getRadio(valoracionPanel)));
+        juegoSeleccionado.setNotas(notasEntrada.getText());
 
-            // Anadir etiquetas guardadas temporalmente en 'etiquetasTmp'
-            for (String e: etiquetasTmp) {
-                juegoSeleccionado.anadirEtiqueta(e);
-            }
+        // Anadir etiquetas
+        /*for (Etiqueta e: juegoSeleccionado.getEtiquetas()) {
+            juegoSeleccionado.anadirEtiqueta(e);
+        }*/
 
+        if (DataManager.updateGame(juegoSeleccionado)) {
             Mensaje.mostrarMensajeInfo("Juego modificado", "El juego se ha modificado correctamente.");
         } else {
-            Mensaje.mostrarMensajePeligro("Juego ya existe",
-                    "El juego ya coincide en nombre y plataforma con otro juego.");
+            Mensaje.mostrarMensajeError("Juego sin modificar",
+                    "Ha ocurrido un error y no se ha podido modificar el juego.");
         }
     }
 

@@ -13,7 +13,7 @@ public class Juego {
     private String plataforma;
     private Estado estado;
     // (hack n slash, etc)
-    private Set<String> etiquetas;
+    private Set<Etiqueta> etiquetas;
     private Valoracion valoracion;
     // comentarios extra
     private String notas;
@@ -48,7 +48,7 @@ public class Juego {
         return estado;
     }
 
-    public Set<String> getEtiquetas() {
+    public Set<Etiqueta> getEtiquetas() {
         return etiquetas;
     }
 
@@ -94,16 +94,16 @@ public class Juego {
         this.estado = estado;
     }
 
-    public void setEtiquetas(Set<String> etiquetas) {
+    public void setEtiquetas(Set<Etiqueta> etiquetas) {
         this.etiquetas = (etiquetas != null)
                 ? new HashSet<>(etiquetas)
                 : new HashSet<>();
     }
 
-    public void anadirEtiqueta(String etiqueta) {
-        if (etiqueta == null || etiqueta.isBlank()) return;
+    public void anadirEtiqueta(Etiqueta etiqueta) {
+        if (etiqueta == null || etiqueta.getNombre().isBlank()) return;
 
-        etiquetas.add(etiqueta.trim());
+        etiquetas.add(etiqueta);
     }
 
     public void setValoracion(Valoracion valoracion) {

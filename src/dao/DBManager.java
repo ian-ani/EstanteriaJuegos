@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import config.DBConfig;
 import config.DBType;
 import entity.Estado;
+import entity.Etiqueta;
 import entity.Juego;
 import entity.Valoracion;
 import util.GameQueries;
@@ -33,7 +34,7 @@ public class DBManager {
     private static final Gson gson = new Gson();
 
     // Tipo para el Gson
-    private static final Type kSET_STRING_TYPE = new TypeToken<Set<String>>(){}.getType();
+    private static final Type kSET_TAG_TYPE = new TypeToken<Set<Etiqueta>>(){}.getType();
 
     // Intentar cargar el JDBC driver
     public static boolean loadDriver() {
@@ -43,10 +44,10 @@ public class DBManager {
             kLOGGER.log(Level.INFO, "OK!");
             return true;
         } catch (ClassNotFoundException e) {
-            kLOGGER.log(Level.SEVERE, "Ha habido un problema con la clase del driver.");
+            kLOGGER.log(Level.SEVERE, "Ha habido un problema con la clase del driver.", e);
             return false;
         } catch (Exception e) {
-            kLOGGER.log(Level.SEVERE, "Ha habido un problema general cargando el driver.");
+            kLOGGER.log(Level.SEVERE, "Ha habido un problema general cargando el driver.", e);
             return false;
         }
     }
@@ -88,8 +89,8 @@ public class DBManager {
     // Construir juego
     private static Juego buildGame(ResultSet rs) throws SQLException {
         String json = rs.getString("etiquetas");
-        Set<String> etiquetas = (json != null)
-                ? gson.fromJson(json, kSET_STRING_TYPE)
+        Set<Etiqueta> etiquetas = (json != null)
+                ? gson.fromJson(json, kSET_TAG_TYPE)
                 : new HashSet<>();
 
         Juego tmp = new Juego(
@@ -98,7 +99,7 @@ public class DBManager {
                 rs.getString("plataforma"),
                 Estado.valueOf(rs.getString("estado")),
                 Valoracion.valueOf(rs.getString("valoracion")),
-                rs.getString("comentarios")
+                rs.getString("notas")
         );
         tmp.setEtiquetas(etiquetas);
 

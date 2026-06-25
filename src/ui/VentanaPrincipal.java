@@ -1,5 +1,6 @@
 package ui;
 
+import dao.DataManager;
 import entity.Estado;
 import entity.Juego;
 import entity.Valoracion;
@@ -66,7 +67,9 @@ public class VentanaPrincipal {
                 General.bloquearBotones(juegoBotonPanel, false, anadirButton);
 
                 // Volver a mostrar la tabla
-                //crearTabla(juegos);
+                juegos = DataManager.getGames();
+                juegosMostrados = juegos;
+                crearTabla(juegosMostrados);
             }
         });
 
@@ -151,10 +154,8 @@ public class VentanaPrincipal {
     /* OTROS METODOS */
 
     private void init() {
-        // TODO obtener registros desde la base de datos
-
-        // TODO borrar test
-        test();
+        // Obtener registros
+        juegos = DataManager.getGames();
 
         juegosMostrados = juegos;
 
@@ -166,7 +167,7 @@ public class VentanaPrincipal {
     }
 
     // TODO borrar luego!!
-    private void test() {
+    /*private void test() {
         juegos.add(new Juego(0, "Diablo III", "PlayStation 3", Estado.COMPLETADO,
                 Valoracion.GUSTADO, "Cosas."));
         juegos.get(0).anadirEtiqueta("arpg");
@@ -179,7 +180,7 @@ public class VentanaPrincipal {
         juegos.add(new Juego(0,"Ninja Gaiden Sigma", "PlayStation 3", Estado.PENDIENTE,
                 Valoracion.NO_VALORADO, "Cosas."));
         juegos.get(2).anadirEtiqueta("hack n slash");
-    }
+    }*/
 
     private void crearTabla(List<Juego> lista) {
         juegoSeleccionado = null;
@@ -219,9 +220,12 @@ public class VentanaPrincipal {
         // callback
         detalleJuegoWindow.setOnJuegoCreado((juego) -> {
                 if (!juegos.contains(juego)) {
-                    juegos.add(juego);
+                    DataManager.insertGame(juego);
+                    juegos = DataManager.getGames();
                     juegosMostrados = juegos;
                     crearTabla(juegosMostrados);
+                } else {
+                    Mensaje.mostrarMensajePeligro("Juego existente", "El juego ya existe.");
                 }
             }
         );
@@ -244,17 +248,10 @@ public class VentanaPrincipal {
 
         // Si la respuesta es 'SI', entonces borrar el juego actual
         if (respuesta == JOptionPane.YES_OPTION) {
-            // TODO esto luego hay que cambiarlo incluyendo el DataManager
-            try {
-                // Borrar juego
+            if (DataManager.deleteGame(juegoSeleccionado)) {
                 juegos.remove(juegoSeleccionado);
-
-                // Desactivar boton de eliminar y editar
-                //General.bloquearBotones(juegoBotonPanel, false, anadirButton);
-
                 return true;
-            } catch (Exception e) {
-                System.err.println("No se ha podido borrar el juego seleccionado: " + e.getMessage());
+            } else {
                 return false;
             }
         }
@@ -313,6 +310,9 @@ public class VentanaPrincipal {
 
     private void reiniciar() {
         busquedaEntrada.setText("");
+
+        // Obtener registros
+        juegos = DataManager.getGames();
 
         juegosMostrados = juegos;
         crearTabla(juegosMostrados);
