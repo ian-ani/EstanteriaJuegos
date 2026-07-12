@@ -369,13 +369,13 @@ public class DetalleJuego extends JDialog {
         String nombre = nombreEntrada.getText();
         String plataforma = plataformaEntrada.getText();
 
-        // Verificar si el juego existe (y no efectuar los cambios si es asi)
-        boolean existente = verificarJuegoExistente(nombre, plataforma);
+        // TODO Verificar si el juego existe (y no efectuar los cambios si es asi)
+        //boolean existente = verificarJuegoExistente(nombre, plataforma);
 
-        if (existente) {
+        /*if (existente) {
             Mensaje.mostrarMensajePeligro("Juego existente", "El juego ya existe.");
             return;
-        }
+        }*/
 
         // Cambiar datos
         juegoSeleccionado.setNombre(nombre);

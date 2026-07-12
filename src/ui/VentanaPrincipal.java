@@ -10,8 +10,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 
 import static config.UIConstantes.*;
@@ -31,10 +30,15 @@ public class VentanaPrincipal {
     private JTextField busquedaEntrada;
     private JTable tabla;
     private JPanel juegoBotonPanel;
-    private JPanel persistenciaPanel;
+    private JPanel miscPanel;
     private JButton exportarButton;
     private JButton reiniciarButton;
     private JComboBox filtroComboBox;
+    private JButton idiomaButton;
+
+    // Variables de idioma
+    private ResourceBundle rb;
+    private Locale locale;
 
     // Juego seleccionado
     Juego juegoSeleccionado;
@@ -45,7 +49,11 @@ public class VentanaPrincipal {
 
     /* CONSTRUCTOR */
 
-    public VentanaPrincipal() {
+    public VentanaPrincipal(ResourceBundle rb, Locale locale) {
+        // Anadir ResourceBundle
+        this.rb = rb;
+        this.locale = locale;
+
         // Inicializacion de propiedades
         init();
 
@@ -100,8 +108,8 @@ public class VentanaPrincipal {
 
                     if (!encontrado) {
                         Mensaje.mostrarMensajeError(
-                                "No encontrado",
-                                "No se ha encontrado ningún juego bajo ese criterio."
+                                rb.getString("error.not_found.title"),
+                                rb.getString("error.not_found.msg")
                         );
                     } else {
                         if (juegoSeleccionado != null) {
@@ -130,8 +138,8 @@ public class VentanaPrincipal {
                 boolean borrado = eliminar();
 
                 // Mensaje al usuario
-                if (borrado) Mensaje.mostrarMensajeInfo("Juego borrado", "Juego borrado correctamente.");
-                else Mensaje.mostrarMensajeError("Juego no borrado", "No se ha podido borrar el juego seleccionado.");
+                if (borrado) Mensaje.mostrarMensajeInfo(rb.getString("info.delete_game.title"), rb.getString("info.delete_game.msg"));
+                else Mensaje.mostrarMensajeError(rb.getString("error.delete_game.title"), rb.getString("error.delete_game.msg"));
 
                 // Volver a mostrar la tabla
                 juegosMostrados = juegos;
@@ -147,6 +155,15 @@ public class VentanaPrincipal {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // TODO
+            }
+        });
+
+        // Cambiar idioma
+        idiomaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (locale.equals(Locale.ENGLISH)) cambiarIdioma(new Locale("es"));
+                else cambiarIdioma(Locale.ENGLISH);
             }
         });
     }
@@ -176,15 +193,38 @@ public class VentanaPrincipal {
 
     private void initComboBox() {
         filtroComboBox.setModel(new DefaultComboBoxModel<>(
-                new String[] {"Nombre", "Plataforma"}
+                new String[] {rb.getString("filter.name"), rb.getString("filter.platform")}
         ));
+    }
+
+    private void cambiarIdioma(Locale locale) {
+        // Idioma
+        // TODO poner el nombre del bundle en una constante
+        rb = ResourceBundle.getBundle("i18n.messages", locale);
+
+        // Obtener ancestro
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(panelGeneral);
+
+        // Crear nueva ventana principal
+        VentanaPrincipal vp = new VentanaPrincipal(rb, locale);
+
+        // Volver a poner el titulo y el panel general en la nueva ventana
+        frame.setTitle(rb.getString("window.title"));
+        frame.setContentPane(vp.getPanelGeneral());
+
+        // Cambiar textos
+        frame.revalidate();
+        frame.repaint();
     }
 
     private void crearTabla(List<Juego> lista) {
         juegoSeleccionado = null;
 
         Object[][] datos = new Object[lista.size()][6];
-        String[] columnas = new String[]{"Nombre", "Plataforma", "Estado", "Etiquetas", "Valoración", "Comentarios"};
+        String[] columnas = new String[]{
+                rb.getString("table.name"), rb.getString("table.platform"), rb.getString("table.status"),
+                rb.getString("table.tags"), rb.getString("table.opinion"), rb.getString("table.notes")
+        };
 
         // Recorrer y guardar datos de los juegos en la tabla
         for (int i = 0; i < lista.size(); i++) {
@@ -210,7 +250,7 @@ public class VentanaPrincipal {
     private void anadir() {
         DetalleJuego detalleJuegoWindow = new DetalleJuego(juegos, null, DetalleJuego.Modo.CREAR);
 
-        detalleJuegoWindow.setTitle("Añadir juego...");
+        detalleJuegoWindow.setTitle(rb.getString("window.add.title"));
         detalleJuegoWindow.setSize(kANCHO_VENTANA, kALTO_VENTANA);
         detalleJuegoWindow.setResizable(false);
         detalleJuegoWindow.setLocationRelativeTo(null);
@@ -222,8 +262,9 @@ public class VentanaPrincipal {
                     juegos = DataManager.getGames();
                     juegosMostrados = juegos;
                     crearTabla(juegosMostrados);
+                    Mensaje.mostrarMensajeInfo(rb.getString("info.add_game.title"), rb.getString("info.add_game.msg"));
                 } else {
-                    Mensaje.mostrarMensajePeligro("Juego existente", "El juego ya existe.");
+                    Mensaje.mostrarMensajePeligro(rb.getString("warning.exist_game.title"), rb.getString("warning.exist_game.msg"));
                 }
             }
         );
@@ -233,14 +274,15 @@ public class VentanaPrincipal {
 
     private boolean eliminar() {
         // Traducir texto de los botoners de 'SI' y 'NO'
+        // TODO estos mensajes
         UIManager.put("OptionPane.yesButtonText", "Sí");
         UIManager.put("OptionPane.noButtonText", "No");
 
         // Mostrar una ventana de confirmacion
         int respuesta = JOptionPane.showConfirmDialog(
                 null,
-                "¿Estás seguro de querer borrar el juego " + juegoSeleccionado.getNombre() + "?",
-                "Confirmar borrado",
+                rb.getString("info.confirm_delete_game.title") + " " + juegoSeleccionado.getNombre() + "?",
+                rb.getString("info.confirm_delete_game.msg"),
                 JOptionPane.YES_NO_OPTION
         );
 
@@ -260,7 +302,7 @@ public class VentanaPrincipal {
     private void ver() {
         DetalleJuego detalleJuegoWindow = new DetalleJuego(juegos, juegoSeleccionado, DetalleJuego.Modo.VER);
 
-        detalleJuegoWindow.setTitle("Ver juego...");
+        detalleJuegoWindow.setTitle(rb.getString("window.view.title"));
         detalleJuegoWindow.setSize(kANCHO_VENTANA, kALTO_VENTANA);
         detalleJuegoWindow.setResizable(false);
         detalleJuegoWindow.setLocationRelativeTo(null);
@@ -311,9 +353,9 @@ public class VentanaPrincipal {
         General.bloquearBotones(juegoBotonPanel, false, anadirButton);
 
         // Busqueda segun criterio
-        if ("Nombre".equals(filtro)) {
+        if (rb.getString("filter.name").equals(filtro)) {
             return buscarNombre(nombre);
-        } else if ("Plataforma".equals(filtro)) {
+        } else if (rb.getString("filter.platform").equals(filtro)) {
             return buscarPlataforma(nombre);
         }
 
@@ -334,11 +376,12 @@ public class VentanaPrincipal {
 
     // Seguramente pulsando a algo de la cabecera podria filtrar por asc desc en base a esa columna?
     // Anadir icono del programa
-    // Pasar nombres al ingles :) lo mismo podria poner un archivo de localizacion tambien!
     // Estaria mejor que si el juego existe, te deje cambiar en lugar de cerrar la ventana de crear/ver
     // Anadir documentacion con javadoc
     // Exportar a CSV que no deberia de ser muy dificil
     // Validaciones??
     // Personalizacion?? Aunque eso es lo de menos
     // Algunas partes del codigo (obviando comentarios) estan en un idioma y otras en otro, pasar todas al ingles
+    // Seguir con la internacionalizacion (ESTOY CON ESTO)
+    // Si el juego ya existe en editar, lo deja pasar, deberia comprobar si existe en la base de datos directamente
 }
