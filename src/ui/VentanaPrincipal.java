@@ -288,7 +288,6 @@ public class VentanaPrincipal {
     }
 
     private boolean buscarPlataforma(String nombre) {
-        // TODO luego se pasa a DataManager
         List<Juego> tmp = DataManager.selectGameByPlatform(nombre);
 
         // Si la lista esta vacia
@@ -333,12 +332,10 @@ public class VentanaPrincipal {
         General.bloquearBotones(juegoBotonPanel, false, anadirButton);
     }
 
-    // Anadir busqueda por mas campos
     // Seguramente pulsando a algo de la cabecera podria filtrar por asc desc en base a esa columna?
     // Anadir icono del programa
     // Pasar nombres al ingles :) lo mismo podria poner un archivo de localizacion tambien!
-    // Pasar la logica a 'service', dejar aqui solo la de presentacion como crearTabla, bloquearBotones, etc
-    // y pasar a service la creacion, edicion, etc y llamarla desde aqui
+    // Estaria mejor que si el juego existe, te deje cambiar en lugar de cerrar la ventana de crear/ver
     // Anadir documentacion con javadoc
     // Exportar a CSV que no deberia de ser muy dificil
     // Validaciones??

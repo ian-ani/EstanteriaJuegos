@@ -10,13 +10,13 @@ import util.Mensaje;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
 public class DetalleJuego extends JDialog {
-    //private Set<Etiqueta> etiquetasTmp = new HashSet<>();
+    private Set<Etiqueta> etiquetasTmp = new HashSet<>();
     private Consumer<Juego> onJuegoCreado; // callback consumer
 
     private List<Juego> juegos;
@@ -137,17 +137,17 @@ public class DetalleJuego extends JDialog {
     }
 
     private void crearPanelEtiqueta(String nombre) {
-        // TODO Si la etiqueta ya existe, no continuar
-        //if (etiquetaExiste(nombre)) return;
+        // Si la etiqueta ya existe, no continuar
+        if (etiquetaExiste(nombre)) return;
+
         // Crear etiqueta
         Etiqueta etiqueta = new Etiqueta(nombre);
 
         // Guardar etiqueta
         if (juegoSeleccionado != null) {
             juegoSeleccionado.anadirEtiqueta(etiqueta);
+            etiquetasTmp.add(etiqueta);
         }
-
-        //etiquetasTmp.add(etiqueta);
 
         // Anadir panel
         JPanel panel = new JPanel();
@@ -165,9 +165,11 @@ public class DetalleJuego extends JDialog {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO borrar etiqueta (nivel logico)
-                //etiquetasTmp.remove(etiqueta);
-                juegoSeleccionado.getEtiquetas().remove(etiqueta);
+                etiquetasTmp.remove(etiqueta);
+
+                if (juegoSeleccionado != null) {
+                    juegoSeleccionado.getEtiquetas().remove(etiqueta);
+                }
 
                 // Borrar etiqueta (nivel visual)
                 etiquetasAnadidasPanel.remove(panel);
@@ -204,13 +206,16 @@ public class DetalleJuego extends JDialog {
         return campo.getText().trim().length() <= largo;
     }
 
-    /*private boolean etiquetaExiste(Etiqueta etiqueta) {
+    private boolean etiquetaExiste(String etiqueta) {
         for (Etiqueta e: etiquetasTmp) {
-            if (e.equals(etiqueta)) return true;
+            if (e.getNombre().equalsIgnoreCase(etiqueta)) {
+                System.out.println(e.getNombre() + " " + etiqueta);
+                return true;
+            }
         }
 
         return false;
-    }*/
+    }
 
     // Obtener valor de los radios
     private String getRadio(JPanel panel) {
@@ -302,7 +307,10 @@ public class DetalleJuego extends JDialog {
 
         // Eliminar lo referente a etiquetas (campo de texto, vaciar lista, vaciar paneles)
         etiquetaEntrada.setText("");
-        //etiquetasTmp.clear();
+
+        // Vaciar etiquetas temporales
+        etiquetasTmp.clear();
+
         reiniciarEtiquetas(etiquetasAnadidasPanel);
     }
 
@@ -362,9 +370,13 @@ public class DetalleJuego extends JDialog {
         String plataforma = plataformaEntrada.getText();
 
         // Verificar si el juego existe (y no efectuar los cambios si es asi)
-        //boolean existente = verificarJuegoExistente(nombre, plataforma);
+        boolean existente = verificarJuegoExistente(nombre, plataforma);
 
-        // TODO
+        if (existente) {
+            Mensaje.mostrarMensajePeligro("Juego existente", "El juego ya existe.");
+            return;
+        }
+
         // Cambiar datos
         juegoSeleccionado.setNombre(nombre);
         juegoSeleccionado.setPlataforma(plataforma);
@@ -419,4 +431,4 @@ public class DetalleJuego extends JDialog {
     }
 }
 
-// TODO bug donde al anadir una etiqueta, si se borra luego no se puede volver a anadir?
+// TODO no admite repetidos en modificar pero en crear si... arreglar eso
