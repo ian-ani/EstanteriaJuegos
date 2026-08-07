@@ -3,27 +3,26 @@ package entity;
 public enum Valoracion {
     /* VALORES */
 
-    GUSTADO("Gustado"),
-    NO_GUSTADO("No gustado"),
-    INDIFERENTE("Indiferente"),
-    NO_VALORADO("Sin valoración");
+    GUSTADO,
+    NO_GUSTADO,
+    INDIFERENTE,
+    NO_VALORADO;
 
     /* ATRIBUTOS */
 
-    private final String nombre;
+    //private final String nombre;
 
     /* CONSTRUCTOR */
 
-    Valoracion(String nombre) {
-        this.nombre = nombre;
-    }
+    /*Valoracion(String nombre) {
+        t*/
 
     /* METODO TOSTRING */
 
-    @Override
+    /*@Override
     public String toString() {
         return this.nombre;
-    }
+    }*/
 
     /* OTROS METODOS */
 

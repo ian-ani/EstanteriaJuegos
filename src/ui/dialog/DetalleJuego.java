@@ -330,18 +330,43 @@ public class DetalleJuego extends JDialog {
     }
 
     // Traducir nombre de las propiedades
+    private void traducir(JLabel label, String txt) {
+        label.setText(rb.getString(txt) + ":");
+    }
+
     private void nombrePropiedades() {
-        nombreLabel.setText(rb.getString("table.name") + ":");
-        plataformaLabel.setText(rb.getString("table.platform") + ":");
-        etiquetasLabel.setText(rb.getString("table.tags") + ":");
-        estadoLabel.setText(rb.getString("table.status") + ":");
-        valoracionLabel.setText(rb.getString("table.opinion") + ":");
-        notasLabel.setText(rb.getString("table.notes") + ":");
+        traducir(nombreLabel, "table.name");
+        traducir(plataformaLabel, "table.platform");
+        traducir(etiquetasLabel, "table.tags");
+        traducir(estadoLabel, "table.status");
+        traducir(valoracionLabel, "table.opinion");
+        traducir(notasLabel, "table.notes");
+    }
+
+    // Traducir nombre de los botones de estado y valoracion
+    private void traducir(JRadioButton radio, String txt) {
+        radio.setText(rb.getString(txt));
+    }
+
+    private void nombreEstado() {
+        traducir(completadoRadio, "Estado.COMPLETADO");
+        traducir(jugandoRadio, "Estado.JUGANDO");
+        traducir(pendienteRadio, "Estado.PENDIENTE");
+        traducir(abandonadoRadio, "Estado.ABANDONADO");
+    }
+
+    private void nombreValoracion() {
+        traducir(gustadoRadio, "Valoracion.GUSTADO");
+        traducir(noGustadoRadio, "Valoracion.NO_GUSTADO");
+        traducir(indiferenteRadio, "Valoracion.INDIFERENTE");
+        traducir(noValoradoRadio, "Valoracion.NO_VALORADO");
     }
 
     // Limpia el juego de la ventana actual para que no quede basurilla
     private void init() {
         nombrePropiedades();
+        nombreEstado();
+        nombreValoracion();
 
         switch (modoSeleccionado) {
             case Modo.VER -> initVer();

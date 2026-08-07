@@ -2,6 +2,7 @@ package ui;
 
 import dao.DataManager;
 import entity.Juego;
+import entity.Valoracion;
 import ui.dialog.DetalleJuego;
 import util.General;
 import util.Mensaje;
@@ -226,13 +227,17 @@ public class VentanaPrincipal {
     }
 
     // Nombre de los botones de la ventana principal
+    private void traducir(JButton btn, String txt) {
+        btn.setText(rb.getString(txt));
+    }
+
     private void nombreBotones() {
-        anadirButton.setText(rb.getString("button.add"));
-        verButton.setText(rb.getString("button.view"));
-        eliminarButton.setText(rb.getString("button.remove"));
-        idiomaButton.setText(rb.getString("button.language"));
-        exportarButton.setText(rb.getString("button.export"));
-        reiniciarButton.setText(rb.getString("button.clear"));
+        traducir(anadirButton, "button.add");
+        traducir(verButton, "button.view");
+        traducir(eliminarButton, "button.remove");
+        traducir(idiomaButton, "button.language");
+        traducir(exportarButton, "button.export");
+        traducir(reiniciarButton, "button.clear");
     }
 
     // Tabla de la ventana principal con los registros del juego
@@ -240,7 +245,7 @@ public class VentanaPrincipal {
         juegoSeleccionado = null;
 
         Object[][] datos = new Object[lista.size()][6];
-        String[] columnas = new String[]{
+        String[] columnas = new String[] {
                 rb.getString("table.name"), rb.getString("table.platform"), rb.getString("table.status"),
                 rb.getString("table.tags"), rb.getString("table.opinion"), rb.getString("table.notes")
         };
@@ -251,9 +256,9 @@ public class VentanaPrincipal {
 
             datos[i][0] = juego.getNombre();
             datos[i][1] = juego.getPlataforma();
-            datos[i][2] = juego.getEstado();
+            datos[i][2] = rb.getString("Estado." + juego.getEstado());
             datos[i][3] = juego.getEtiquetas();
-            datos[i][4] = juego.getValoracion();
+            datos[i][4] = rb.getString("Valoracion." + juego.getValoracion());
             datos[i][5] = juego.getNotas();
         }
 
@@ -416,5 +421,4 @@ public class VentanaPrincipal {
     // Personalizacion?? Aunque eso es lo de menos
     // Algunas partes del codigo (obviando comentarios) estan en un idioma y otras en otro, pasar todas al ingles
     // Si el juego ya existe en editar, lo deja pasar, deberia comprobar si existe en la base de datos directamente
-    // TODO En la internacionalizacion falta: enums!!!
 }

@@ -3,27 +3,27 @@ package entity;
 public enum Estado {
     /* VALORES */
 
-    COMPLETADO("Completado"),
-    JUGANDO("Jugando"),
-    PENDIENTE("Pendiente"),
-    ABANDONADO("Abandonado");
+    COMPLETADO,
+    JUGANDO,
+    PENDIENTE,
+    ABANDONADO;
 
     /* ATRIBUTOS */
 
-    private final String nombre;
+    //private final String nombre;
 
     /* CONSTRUCTOR */
 
-    Estado(String nombre) {
+    /*Estado(String nombre) {
         this.nombre = nombre;
-    }
+    }*/
 
     /* METODO TOSTRING */
 
-    @Override
+    /*@Override
     public String toString() {
         return this.nombre;
-    }
+    }*/
 
     /* OTROS METODOS */
 
