@@ -145,4 +145,10 @@ public class Juego {
     public int hashCode() {
         return Objects.hash(nombre, plataforma);
     }
+
+    /* OTROS METODOS */
+
+    public String toCsv() {
+        return String.format("%s, %s, %s, %s, %s, %s", nombre, plataforma, estado, etiquetas, valoracion, notas);
+    }
 }

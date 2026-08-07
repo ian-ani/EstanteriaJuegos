@@ -4,6 +4,7 @@ import dao.DataManager;
 import entity.Juego;
 import entity.Valoracion;
 import ui.dialog.DetalleJuego;
+import util.ConvertCsv;
 import util.General;
 import util.Mensaje;
 
@@ -155,7 +156,24 @@ public class VentanaPrincipal {
         exportarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO
+                JFileChooser fileChooser = new JFileChooser();
+                int retVal = fileChooser.showSaveDialog(getPanelGeneral());
+
+                if (retVal == JFileChooser.APPROVE_OPTION) {
+                    ConvertCsv csv = new ConvertCsv(fileChooser.getSelectedFile().toPath(), juegos);
+
+                    if (csv.convert()) {
+                        Mensaje.mostrarMensajeInfo(
+                                rb.getString("info.csv_export.title"),
+                                rb.getString("info.csv_export.msg")
+                        );
+                    } else {
+                        Mensaje.mostrarMensajeError(
+                                rb.getString("error.csv_export.title"),
+                                rb.getString("error.csv_export.msg")
+                        );
+                    }
+                }
             }
         });
 
@@ -416,7 +434,6 @@ public class VentanaPrincipal {
     // Anadir icono del programa
     // Estaria mejor que si el juego existe, te deje cambiar en lugar de cerrar la ventana de crear/ver
     // Anadir documentacion con javadoc
-    // Exportar a CSV que no deberia de ser muy dificil
     // Validaciones??
     // Personalizacion?? Aunque eso es lo de menos
     // Algunas partes del codigo (obviando comentarios) estan en un idioma y otras en otro, pasar todas al ingles
