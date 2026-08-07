@@ -2,6 +2,7 @@ package entity;
 
 public enum Valoracion {
     /* VALORES */
+
     GUSTADO("Gustado"),
     NO_GUSTADO("No gustado"),
     INDIFERENTE("Indiferente"),

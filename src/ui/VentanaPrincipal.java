@@ -176,12 +176,16 @@ public class VentanaPrincipal {
 
     /* OTROS METODOS */
 
+    // Propiedades iniciales de la ventana principal
     private void init() {
         // Obtener registros
         juegos = DataManager.getGames();
 
         // Propiedades
         initComboBox();
+
+        // Texto de los botones de acuerdo al idioma
+        nombreBotones();
 
         // Mostrar juegos
         juegosMostrados = juegos;
@@ -197,6 +201,7 @@ public class VentanaPrincipal {
         ));
     }
 
+    // Boton de cambiar idioma (ingles o castellano)
     private void cambiarIdioma(Locale locale) {
         // Idioma
         // TODO poner el nombre del bundle en una constante
@@ -215,8 +220,22 @@ public class VentanaPrincipal {
         // Cambiar textos
         frame.revalidate();
         frame.repaint();
+
+        // Texto de los botones de acuerdo al idioma
+        nombreBotones();
     }
 
+    // Nombre de los botones de la ventana principal
+    private void nombreBotones() {
+        anadirButton.setText(rb.getString("button.add"));
+        verButton.setText(rb.getString("button.view"));
+        eliminarButton.setText(rb.getString("button.remove"));
+        idiomaButton.setText(rb.getString("button.language"));
+        exportarButton.setText(rb.getString("button.export"));
+        reiniciarButton.setText(rb.getString("button.clear"));
+    }
+
+    // Tabla de la ventana principal con los registros del juego
     private void crearTabla(List<Juego> lista) {
         juegoSeleccionado = null;
 
@@ -247,8 +266,9 @@ public class VentanaPrincipal {
         });
     }
 
+    // Boton de anadir juego
     private void anadir() {
-        DetalleJuego detalleJuegoWindow = new DetalleJuego(juegos, null, DetalleJuego.Modo.CREAR);
+        DetalleJuego detalleJuegoWindow = new DetalleJuego(this.rb, this.locale, juegos, null, DetalleJuego.Modo.CREAR);
 
         detalleJuegoWindow.setTitle(rb.getString("window.add.title"));
         detalleJuegoWindow.setSize(kANCHO_VENTANA, kALTO_VENTANA);
@@ -272,19 +292,30 @@ public class VentanaPrincipal {
         detalleJuegoWindow.setVisible(true);
     }
 
-    private boolean eliminar() {
-        // Traducir texto de los botoners de 'SI' y 'NO'
-        // TODO estos mensajes
-        UIManager.put("OptionPane.yesButtonText", "Sí");
-        UIManager.put("OptionPane.noButtonText", "No");
+    // Boton de borrar juego
+    private void traducirBotonesEliminar() {
+        if (!locale.equals(Locale.ENGLISH)) {
+            UIManager.put("OptionPane.yesButtonText", "Sí");
+        } else {
+            UIManager.put("OptionPane.yesButtonText", "Yes");
+        }
+    }
 
-        // Mostrar una ventana de confirmacion
-        int respuesta = JOptionPane.showConfirmDialog(
+    private int ventanaConfirmacionBorrado() {
+         return JOptionPane.showConfirmDialog(
                 null,
-                rb.getString("info.confirm_delete_game.title") + " " + juegoSeleccionado.getNombre() + "?",
-                rb.getString("info.confirm_delete_game.msg"),
+                rb.getString("info.confirm_delete_game.msg") + " " + juegoSeleccionado.getNombre() + "?",
+                rb.getString("info.confirm_delete_game.title"),
                 JOptionPane.YES_NO_OPTION
         );
+    }
+
+    private boolean eliminar() {
+        // Traducir texto de los botones de 'SI' cuando el idioma seleccionado es el castellano
+        traducirBotonesEliminar();
+
+        // Mostrar una ventana de confirmacion
+        int respuesta = ventanaConfirmacionBorrado();
 
         // Si la respuesta es 'SI', entonces borrar el juego actual
         if (respuesta == JOptionPane.YES_OPTION) {
@@ -299,8 +330,9 @@ public class VentanaPrincipal {
         return false;
     }
 
+    // Boton de ver juego
     private void ver() {
-        DetalleJuego detalleJuegoWindow = new DetalleJuego(juegos, juegoSeleccionado, DetalleJuego.Modo.VER);
+        DetalleJuego detalleJuegoWindow = new DetalleJuego(this.rb, this.locale, juegos, juegoSeleccionado, DetalleJuego.Modo.VER);
 
         detalleJuegoWindow.setTitle(rb.getString("window.view.title"));
         detalleJuegoWindow.setSize(kANCHO_VENTANA, kALTO_VENTANA);
@@ -313,6 +345,7 @@ public class VentanaPrincipal {
         //crearTabla(juegosMostrados);
     }
 
+    // Busquedas de juego bajo criterio
     private boolean buscarNombre(String nombre) {
         List<Juego> tmp = DataManager.selectGameByName(nombre);
 
@@ -382,6 +415,6 @@ public class VentanaPrincipal {
     // Validaciones??
     // Personalizacion?? Aunque eso es lo de menos
     // Algunas partes del codigo (obviando comentarios) estan en un idioma y otras en otro, pasar todas al ingles
-    // Seguir con la internacionalizacion (ESTOY CON ESTO)
     // Si el juego ya existe en editar, lo deja pasar, deberia comprobar si existe en la base de datos directamente
+    // TODO En la internacionalizacion falta: enums!!!
 }

@@ -10,18 +10,25 @@ import util.Mensaje;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 public class DetalleJuego extends JDialog {
+    // Etiquetas
     private Set<Etiqueta> etiquetasTmp = new HashSet<>();
+
+    // Consumer
     private Consumer<Juego> onJuegoCreado; // callback consumer
 
+    // Lista de juegos y juegos seleccionado
     private List<Juego> juegos;
     private Juego juegoSeleccionado;
     private Modo modoSeleccionado;
+
+    // Variables de idioma
+    private ResourceBundle rb;
+    private Locale locale;
 
     private JPanel panelGeneral;
     private JButton buttonOK;
@@ -57,12 +64,17 @@ public class DetalleJuego extends JDialog {
     private JButton anadirEtiquetaButton;
     private JPanel etiquetasAnadidasPanel;
 
-    // enum anidado para el 'Modo' (se pasa al constructor al abrir la ventana)
+    // Enum anidado para el 'Modo' (se pasa al constructor al abrir la ventana)
     public enum Modo {
         VER, CREAR;
     }
 
-    public DetalleJuego(List<Juego> juegos, Juego juegoSeleccionado, Modo modo) {
+    public DetalleJuego(ResourceBundle rb, Locale locale, List<Juego> juegos, Juego juegoSeleccionado, Modo modo) {
+        // Anadir ResourceBundle
+        this.rb = rb;
+        this.locale = locale;
+
+        // Juegos, juego seleccionado y modo (ver o anadir)
         this.juegos = juegos;
         this.juegoSeleccionado = juegoSeleccionado;
         this.modoSeleccionado = modo;
@@ -115,13 +127,16 @@ public class DetalleJuego extends JDialog {
                         crearPanelEtiqueta(etiquetaEntrada.getText().trim());
                     } else {
                         Mensaje.mostrarMensajeError(
-                                "Etiqueta no válida",
-                                "La etiqueta no puede estar vacía ni contener más de 15 caracteres."
+                                rb.getString("error.invalid_tag.title"),
+                                rb.getString("error.invalid_tag.msg")
                         );
                         return;
                     }
                 } else {
-                    Mensaje.mostrarMensajeError("Límite etiquetas", "No se pueden añadir más de 3 etiquetas.");
+                    Mensaje.mostrarMensajeError(
+                            rb.getString("error.max_limit_tag.title"),
+                            rb.getString("error.max_limit_tag.msg")
+                    );
                     return;
                 }
 
@@ -275,7 +290,7 @@ public class DetalleJuego extends JDialog {
 
     private void initVer() {
         // Cambiar texto de boton 'OK' a 'Editar'
-        buttonOK.setText("Editar");
+        buttonOK.setText(rb.getString("button.edit"));
 
         // Volcar toda la informacion de Juego a los campos de texto
         nombreEntrada.setText(juegoSeleccionado.getNombre());
@@ -294,7 +309,7 @@ public class DetalleJuego extends JDialog {
 
     private void initCrear() {
         // Cambiar texto de boton 'OK' a 'Crear'
-        buttonOK.setText("Crear");
+        buttonOK.setText(rb.getString("button.add"));
 
         // Vaciar campos de texto
         nombreEntrada.setText("");
@@ -314,8 +329,20 @@ public class DetalleJuego extends JDialog {
         reiniciarEtiquetas(etiquetasAnadidasPanel);
     }
 
+    // Traducir nombre de las propiedades
+    private void nombrePropiedades() {
+        nombreLabel.setText(rb.getString("table.name") + ":");
+        plataformaLabel.setText(rb.getString("table.platform") + ":");
+        etiquetasLabel.setText(rb.getString("table.tags") + ":");
+        estadoLabel.setText(rb.getString("table.status") + ":");
+        valoracionLabel.setText(rb.getString("table.opinion") + ":");
+        notasLabel.setText(rb.getString("table.notes") + ":");
+    }
+
     // Limpia el juego de la ventana actual para que no quede basurilla
     private void init() {
+        nombrePropiedades();
+
         switch (modoSeleccionado) {
             case Modo.VER -> initVer();
             case Modo.CREAR -> initCrear();
@@ -390,10 +417,15 @@ public class DetalleJuego extends JDialog {
         }*/
 
         if (DataManager.updateGame(juegoSeleccionado)) {
-            Mensaje.mostrarMensajeInfo("Juego modificado", "El juego se ha modificado correctamente.");
+            Mensaje.mostrarMensajeInfo(
+                    rb.getString("info.edit_game.title"),
+                    rb.getString("info.edit_game.msg")
+            );
         } else {
-            Mensaje.mostrarMensajeError("Juego sin modificar",
-                    "Ha ocurrido un error y no se ha podido modificar el juego.");
+            Mensaje.mostrarMensajeError(
+                    rb.getString("error.edit_game.title"),
+                    rb.getString("error.edit_game.msg")
+            );
         }
     }
 
@@ -412,7 +444,10 @@ public class DetalleJuego extends JDialog {
                 }
             }
         } catch (Exception e) {
-            Mensaje.mostrarMensajeError("Error", "No se ha podido guardar el juego.");
+            Mensaje.mostrarMensajeError(
+                    rb.getString("error.save_game.title"),
+                    rb.getString("error.save_game.msg")
+            );
         } finally {
             // Cerrar ventana
             dispose();
