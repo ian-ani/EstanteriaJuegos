@@ -1,6 +1,6 @@
 package util;
 
-import entity.Juego;
+import entity.Game;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -10,16 +10,16 @@ import java.util.List;
 
 public class ConvertCsv {
     private Path file;
-    private List<Juego> games;
+    private List<Game> games;
 
-    public ConvertCsv(Path file, List<Juego> games) {
+    public ConvertCsv(Path file, List<Game> games) {
         this.file = file;
         this.games = games;
     }
 
     public boolean convert() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file.toFile()))) {
-            for (Juego g: games) {
+            for (Game g: games) {
                 bw.write(g.toCsv());
                 bw.newLine();
             }

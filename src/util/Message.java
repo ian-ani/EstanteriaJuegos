@@ -2,25 +2,25 @@ package util;
 
 import javax.swing.*;
 
-public final class Mensaje {
-    public static void mostrarMensajeInfo(String titulo, String msg) {
+public final class Message {
+    public static void showMessageInfo(String title, String msg) {
         JOptionPane.showMessageDialog(null,
                 msg,
-                titulo,
+                title,
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public static void mostrarMensajePeligro(String titulo, String msg) {
+    public static void showMessageWarning(String title, String msg) {
         JOptionPane.showMessageDialog(null,
                 msg,
-                titulo,
+                title,
                 JOptionPane.WARNING_MESSAGE);
     }
 
-    public static void mostrarMensajeError(String titulo, String msg) {
+    public static void showMessageError(String title, String msg) {
         JOptionPane.showMessageDialog(null,
                 msg,
-                titulo,
+                title,
                 JOptionPane.ERROR_MESSAGE);
     }
 }

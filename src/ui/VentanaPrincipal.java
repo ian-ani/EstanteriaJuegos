@@ -1,12 +1,11 @@
 package ui;
 
 import dao.DataManager;
-import entity.Juego;
-import entity.Valoracion;
+import entity.Game;
 import ui.dialog.DetalleJuego;
 import util.ConvertCsv;
 import util.General;
-import util.Mensaje;
+import util.Message;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,7 +14,7 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
-import static config.UIConstantes.*;
+import static config.UIConstants.*;
 
 public class VentanaPrincipal {
     /* ATRIBUTOS */
@@ -43,11 +42,11 @@ public class VentanaPrincipal {
     private Locale locale;
 
     // Juego seleccionado
-    Juego juegoSeleccionado;
+    Game juegoSeleccionado;
 
     // Lista donde se van a guardar los juegos temporalmente
-    List<Juego> juegos = new ArrayList<>();
-    List<Juego> juegosMostrados = new ArrayList<>();
+    List<Game> games = new ArrayList<>();
+    List<Game> juegosMostrados = new ArrayList<>();
 
     /* CONSTRUCTOR */
 
@@ -75,8 +74,8 @@ public class VentanaPrincipal {
                 General.bloquearBotones(juegoBotonPanel, false, anadirButton);
 
                 // Volver a mostrar la tabla
-                juegos = DataManager.getGames();
-                juegosMostrados = juegos;
+                games = DataManager.getGames();
+                juegosMostrados = games;
                 crearTabla(juegosMostrados);
             }
         });
@@ -109,7 +108,7 @@ public class VentanaPrincipal {
                     boolean encontrado = buscar(busquedaEntrada.getText().trim());
 
                     if (!encontrado) {
-                        Mensaje.mostrarMensajeError(
+                        Message.showMessageError(
                                 rb.getString("error.not_found.title"),
                                 rb.getString("error.not_found.msg")
                         );
@@ -140,11 +139,11 @@ public class VentanaPrincipal {
                 boolean borrado = eliminar();
 
                 // Mensaje al usuario
-                if (borrado) Mensaje.mostrarMensajeInfo(rb.getString("info.delete_game.title"), rb.getString("info.delete_game.msg"));
-                else Mensaje.mostrarMensajeError(rb.getString("error.delete_game.title"), rb.getString("error.delete_game.msg"));
+                if (borrado) Message.showMessageInfo(rb.getString("info.delete_game.title"), rb.getString("info.delete_game.msg"));
+                else Message.showMessageError(rb.getString("error.delete_game.title"), rb.getString("error.delete_game.msg"));
 
                 // Volver a mostrar la tabla
-                juegosMostrados = juegos;
+                juegosMostrados = games;
                 crearTabla(juegosMostrados);
 
                 // Bloquear botones
@@ -160,15 +159,15 @@ public class VentanaPrincipal {
                 int retVal = fileChooser.showSaveDialog(getPanelGeneral());
 
                 if (retVal == JFileChooser.APPROVE_OPTION) {
-                    ConvertCsv csv = new ConvertCsv(fileChooser.getSelectedFile().toPath(), juegos);
+                    ConvertCsv csv = new ConvertCsv(fileChooser.getSelectedFile().toPath(), games);
 
                     if (csv.convert()) {
-                        Mensaje.mostrarMensajeInfo(
+                        Message.showMessageInfo(
                                 rb.getString("info.csv_export.title"),
                                 rb.getString("info.csv_export.msg")
                         );
                     } else {
-                        Mensaje.mostrarMensajeError(
+                        Message.showMessageError(
                                 rb.getString("error.csv_export.title"),
                                 rb.getString("error.csv_export.msg")
                         );
@@ -198,7 +197,7 @@ public class VentanaPrincipal {
     // Propiedades iniciales de la ventana principal
     private void init() {
         // Obtener registros
-        juegos = DataManager.getGames();
+        games = DataManager.getGames();
 
         // Propiedades
         initComboBox();
@@ -207,8 +206,8 @@ public class VentanaPrincipal {
         nombreBotones();
 
         // Mostrar juegos
-        juegosMostrados = juegos;
-        crearTabla(juegos);
+        juegosMostrados = games;
+        crearTabla(games);
 
         // Bloquear botones de eliminar y editar hasta que haya un juego seleccionado
         General.bloquearBotones(juegoBotonPanel, false, anadirButton);
@@ -259,7 +258,7 @@ public class VentanaPrincipal {
     }
 
     // Tabla de la ventana principal con los registros del juego
-    private void crearTabla(List<Juego> lista) {
+    private void crearTabla(List<Game> lista) {
         juegoSeleccionado = null;
 
         Object[][] datos = new Object[lista.size()][6];
@@ -270,14 +269,14 @@ public class VentanaPrincipal {
 
         // Recorrer y guardar datos de los juegos en la tabla
         for (int i = 0; i < lista.size(); i++) {
-            Juego juego = lista.get(i);
+            Game game = lista.get(i);
 
-            datos[i][0] = juego.getNombre();
-            datos[i][1] = juego.getPlataforma();
-            datos[i][2] = rb.getString("Estado." + juego.getEstado());
-            datos[i][3] = juego.getEtiquetas();
-            datos[i][4] = rb.getString("Valoracion." + juego.getValoracion());
-            datos[i][5] = juego.getNotas();
+            datos[i][0] = game.getName();
+            datos[i][1] = game.getPlatform();
+            datos[i][2] = rb.getString("Estado." + game.getStatus());
+            datos[i][3] = game.getTags();
+            datos[i][4] = rb.getString("Valoracion." + game.getOpinion());
+            datos[i][5] = game.getNotes();
         }
 
         // Crear tabla: datos y cabecera
@@ -291,23 +290,23 @@ public class VentanaPrincipal {
 
     // Boton de anadir juego
     private void anadir() {
-        DetalleJuego detalleJuegoWindow = new DetalleJuego(this.rb, this.locale, juegos, null, DetalleJuego.Modo.CREAR);
+        DetalleJuego detalleJuegoWindow = new DetalleJuego(this.rb, this.locale, games, null, DetalleJuego.Modo.CREAR);
 
         detalleJuegoWindow.setTitle(rb.getString("window.add.title"));
-        detalleJuegoWindow.setSize(kANCHO_VENTANA, kALTO_VENTANA);
+        detalleJuegoWindow.setSize(kWIDTH_WINDOW, kHEIGHT_WINDOW);
         detalleJuegoWindow.setResizable(false);
         detalleJuegoWindow.setLocationRelativeTo(null);
 
         // callback
         detalleJuegoWindow.setOnJuegoCreado((juego) -> {
-                if (!juegos.contains(juego)) {
+                if (!games.contains(juego)) {
                     DataManager.insertGame(juego);
-                    juegos = DataManager.getGames();
-                    juegosMostrados = juegos;
+                    games = DataManager.getGames();
+                    juegosMostrados = games;
                     crearTabla(juegosMostrados);
-                    Mensaje.mostrarMensajeInfo(rb.getString("info.add_game.title"), rb.getString("info.add_game.msg"));
+                    Message.showMessageInfo(rb.getString("info.add_game.title"), rb.getString("info.add_game.msg"));
                 } else {
-                    Mensaje.mostrarMensajePeligro(rb.getString("warning.exist_game.title"), rb.getString("warning.exist_game.msg"));
+                    Message.showMessageWarning(rb.getString("warning.exist_game.title"), rb.getString("warning.exist_game.msg"));
                 }
             }
         );
@@ -327,7 +326,7 @@ public class VentanaPrincipal {
     private int ventanaConfirmacionBorrado() {
          return JOptionPane.showConfirmDialog(
                 null,
-                rb.getString("info.confirm_delete_game.msg") + " " + juegoSeleccionado.getNombre() + "?",
+                rb.getString("info.confirm_delete_game.msg") + " " + juegoSeleccionado.getName() + "?",
                 rb.getString("info.confirm_delete_game.title"),
                 JOptionPane.YES_NO_OPTION
         );
@@ -343,7 +342,7 @@ public class VentanaPrincipal {
         // Si la respuesta es 'SI', entonces borrar el juego actual
         if (respuesta == JOptionPane.YES_OPTION) {
             if (DataManager.deleteGame(juegoSeleccionado)) {
-                juegos.remove(juegoSeleccionado);
+                games.remove(juegoSeleccionado);
                 return true;
             } else {
                 return false;
@@ -355,10 +354,10 @@ public class VentanaPrincipal {
 
     // Boton de ver juego
     private void ver() {
-        DetalleJuego detalleJuegoWindow = new DetalleJuego(this.rb, this.locale, juegos, juegoSeleccionado, DetalleJuego.Modo.VER);
+        DetalleJuego detalleJuegoWindow = new DetalleJuego(this.rb, this.locale, games, juegoSeleccionado, DetalleJuego.Modo.VER);
 
         detalleJuegoWindow.setTitle(rb.getString("window.view.title"));
-        detalleJuegoWindow.setSize(kANCHO_VENTANA, kALTO_VENTANA);
+        detalleJuegoWindow.setSize(kWIDTH_WINDOW, kHEIGHT_WINDOW);
         detalleJuegoWindow.setResizable(false);
         detalleJuegoWindow.setLocationRelativeTo(null);
 
@@ -370,13 +369,13 @@ public class VentanaPrincipal {
 
     // Busquedas de juego bajo criterio
     private boolean buscarNombre(String nombre) {
-        List<Juego> tmp = DataManager.selectGameByName(nombre);
+        List<Game> tmp = DataManager.selectGameByName(nombre);
 
         // Si la lista esta vacia
         if (tmp == null || tmp.isEmpty()) return false;
 
         // Ordenar ascendentemente antes de mostrar
-        tmp.sort(Comparator.comparing(Juego::getNombre));
+        tmp.sort(Comparator.comparing(Game::getName));
 
         // Mostrar resultados en la tabla
         juegosMostrados = tmp;
@@ -386,13 +385,13 @@ public class VentanaPrincipal {
     }
 
     private boolean buscarPlataforma(String nombre) {
-        List<Juego> tmp = DataManager.selectGameByPlatform(nombre);
+        List<Game> tmp = DataManager.selectGameByPlatform(nombre);
 
         // Si la lista esta vacia
         if (tmp == null || tmp.isEmpty()) return false;
 
         // Ordenar ascendentemente antes de mostrar
-        tmp.sort(Comparator.comparing(Juego::getPlataforma));
+        tmp.sort(Comparator.comparing(Game::getPlatform));
 
         // Mostrar resultados en la tabla
         juegosMostrados = tmp;
@@ -422,9 +421,9 @@ public class VentanaPrincipal {
         busquedaEntrada.setText("");
 
         // Obtener registros
-        juegos = DataManager.getGames();
+        games = DataManager.getGames();
 
-        juegosMostrados = juegos;
+        juegosMostrados = games;
         crearTabla(juegosMostrados);
 
         General.bloquearBotones(juegoBotonPanel, false, anadirButton);

@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import config.DBConfig;
 import config.DBType;
-import entity.Estado;
-import entity.Etiqueta;
-import entity.Juego;
-import entity.Valoracion;
+import entity.Status;
+import entity.Tag;
+import entity.Game;
+import entity.Opinion;
 import util.GameQueries;
 
 import java.lang.reflect.Type;
@@ -27,19 +27,19 @@ public class DBManager {
     private static Connection conn = null;
 
     // Configuracion de mensajes
-    private static final String kDB_MSQ_CONN_OK = "CONEXIÓN CORRECTA";
-    private static final String kDB_MSQ_CONN_NO = "ERROR EN LA CONEXIÓN";
+    private static final String kDB_MSQ_CONN_OK = "CONNECTION ESTABLISHED";
+    private static final String kDB_MSQ_CONN_NO = "CONNECTION ERROR";
 
     // Inicializacion de Gson (para las etiquetas)
     private static final Gson gson = new Gson();
 
     // Tipo para el Gson
-    private static final Type kSET_TAG_TYPE = new TypeToken<Set<Etiqueta>>(){}.getType();
+    private static final Type kSET_TAG_TYPE = new TypeToken<Set<Tag>>(){}.getType();
 
     // Intentar cargar el JDBC driver
     public static boolean loadDriver() {
         try {
-            kLOGGER.log(Level.INFO, "Cargando driver...");
+            kLOGGER.log(Level.INFO, "Loading driver...");
             Class.forName(DBConfig.defaultConfig(DBType.SQLITE).driver());
             kLOGGER.log(Level.INFO, "OK!");
             return true;
@@ -78,37 +78,37 @@ public class DBManager {
     // Cerrar conexion con la base de datos
     public static void close() {
         try {
-            kLOGGER.log(Level.INFO, "Cerrando la conexión...");
+            kLOGGER.log(Level.INFO, "Closing this connection...");
             conn.close();
             kLOGGER.log(Level.INFO, "OK!");
         } catch (SQLException e) {
-            kLOGGER.log(Level.WARNING, "Ha habido un problema cerrando la conexión con la base de datos.", e);
+            kLOGGER.log(Level.WARNING, "There has been an issue closing the database connection.", e);
         }
     }
 
     // Construir juego
-    private static Juego buildGame(ResultSet rs) throws SQLException {
+    private static Game buildGame(ResultSet rs) throws SQLException {
         String json = rs.getString("etiquetas");
-        Set<Etiqueta> etiquetas = (json != null)
+        Set<Tag> tags = (json != null)
                 ? gson.fromJson(json, kSET_TAG_TYPE)
                 : new HashSet<>();
 
-        Juego tmp = new Juego(
+        Game tmp = new Game(
                 rs.getInt("id"),
                 rs.getString("nombre"),
                 rs.getString("plataforma"),
-                Estado.valueOf(rs.getString("estado")),
-                Valoracion.valueOf(rs.getString("valoracion")),
+                Status.valueOf(rs.getString("estado")),
+                Opinion.valueOf(rs.getString("valoracion")),
                 rs.getString("notas")
         );
-        tmp.setEtiquetas(etiquetas);
+        tmp.setTags(tags);
 
         return tmp;
     }
 
     // Obtener juegos
-    public static List<Juego> getGames() throws SQLException {
-        List<Juego> games = new ArrayList<>();
+    public static List<Game> getGames() throws SQLException {
+        List<Game> games = new ArrayList<>();
         String query = GameQueries.kGET_ALL_GAMES;
 
         try (PreparedStatement ps = conn.prepareStatement(query)) {
@@ -119,15 +119,15 @@ public class DBManager {
             }
 
         } catch (SQLException e) {
-            kLOGGER.log(Level.SEVERE, "No se han podido obtener los juegos.", e);
+            kLOGGER.log(Level.SEVERE, "Couldn't get all the games.", e);
         }
 
         return games;
     }
 
     // Obtener juegos por nombre
-    public static List<Juego> selectGameByName(String name) throws SQLException {
-        List<Juego> games = new ArrayList<>();
+    public static List<Game> selectGameByName(String name) throws SQLException {
+        List<Game> games = new ArrayList<>();
         String query = GameQueries.kGET_GAME_BY_NAME;
 
         try (PreparedStatement ps = conn.prepareStatement(query)) {
@@ -138,15 +138,15 @@ public class DBManager {
                 games.add(buildGame(rs));
             }
         } catch (SQLException e) {
-            kLOGGER.log(Level.SEVERE, "No se ha podido obtener el juego.", e);
+            kLOGGER.log(Level.SEVERE, "Couldn't get this game.", e);
         }
 
         return games;
     }
 
     // Obtener juegos por plataforma
-    public static List<Juego> selectGameByPlatform(String name) throws SQLException {
-        List<Juego> games = new ArrayList<>();
+    public static List<Game> selectGameByPlatform(String name) throws SQLException {
+        List<Game> games = new ArrayList<>();
         String query = GameQueries.kGET_GAME_BY_PLATFORM;
 
         try (PreparedStatement ps = conn.prepareStatement(query)) {
@@ -157,60 +157,60 @@ public class DBManager {
                 games.add(buildGame(rs));
             }
         } catch (SQLException e) {
-            kLOGGER.log(Level.SEVERE, "No se ha podido obtener el juego.", e);
+            kLOGGER.log(Level.SEVERE, "Couldn't get this game.", e);
         }
 
         return games;
     }
 
     // Insertar nuevo juego
-    public static boolean insertGame(Juego game) {
-        kLOGGER.log(Level.INFO, String.format("Insertando juego \n%s...\n", game));
+    public static boolean insertGame(Game game) {
+        kLOGGER.log(Level.INFO, String.format("Inserting game \n%s...\n", game));
         String query = GameQueries.kINSERT_GAME;
 
         try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, game.getNombre());
-            ps.setString(2, game.getPlataforma());
-            ps.setString(3, game.getEstado().name());
-            ps.setString(4, gson.toJson(game.getEtiquetas()));
-            ps.setString(5, game.getValoracion().name());
-            ps.setString(6, game.getNotas());
+            ps.setString(1, game.getName());
+            ps.setString(2, game.getPlatform());
+            ps.setString(3, game.getStatus().name());
+            ps.setString(4, gson.toJson(game.getTags()));
+            ps.setString(5, game.getOpinion().name());
+            ps.setString(6, game.getNotes());
 
             int rows = ps.executeUpdate();
 
             return rows > 0;
         } catch (SQLException e) {
-            kLOGGER.log(Level.SEVERE, "No se ha podido insertar el juego.", e);
+            kLOGGER.log(Level.SEVERE, "Couldn't insert this game.", e);
             return false;
         }
     }
 
     // Editar un juego
-    public static boolean updateGame(Juego game) {
-        kLOGGER.log(Level.INFO, String.format("Editando juego \n%s...\n", game));
+    public static boolean updateGame(Game game) {
+        kLOGGER.log(Level.INFO, String.format("Editing game \n%s...\n", game));
         String query = GameQueries.kUPDATE_GAME;
 
         try (PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, game.getNombre());
-            ps.setString(2, game.getPlataforma());
-            ps.setString(3, game.getEstado().name());
-            ps.setString(4, gson.toJson(game.getEtiquetas()));
-            ps.setString(5, game.getValoracion().name());
-            ps.setString(6, game.getNotas());
+            ps.setString(1, game.getName());
+            ps.setString(2, game.getPlatform());
+            ps.setString(3, game.getStatus().name());
+            ps.setString(4, gson.toJson(game.getTags()));
+            ps.setString(5, game.getOpinion().name());
+            ps.setString(6, game.getNotes());
             ps.setInt(7, game.getId());
 
             int rows = ps.executeUpdate();
 
             return rows > 0;
         } catch (SQLException e) {
-            kLOGGER.log(Level.SEVERE, "No se ha podido editar el juego.", e);
+            kLOGGER.log(Level.SEVERE, "Couldn't edit this game.", e);
             return false;
         }
     }
 
     // Borrar un juego
-    public static boolean deleteGame(Juego game) {
-        kLOGGER.log(Level.INFO, String.format("Borrando juego \n%s...\n", game));
+    public static boolean deleteGame(Game game) {
+        kLOGGER.log(Level.INFO, String.format("Deleting game \n%s...\n", game));
         String query = GameQueries.kDELETE_GAME;
 
         try (PreparedStatement ps = conn.prepareStatement(query)) {
@@ -220,10 +220,8 @@ public class DBManager {
 
             return rows > 0;
         } catch (SQLException e) {
-            kLOGGER.log(Level.SEVERE, "No se ha podido borrar el juego.", e);
+            kLOGGER.log(Level.SEVERE, "Couldn't delete this game.", e);
             return false;
         }
     }
 }
-
-// TODO localizacion de los mensajes

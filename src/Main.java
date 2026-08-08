@@ -4,8 +4,8 @@ import javax.swing.*;
 
 import java.util.ResourceBundle;
 
-import static config.UIConstantes.kALTO_VENTANA_PRINCIPAL;
-import static config.UIConstantes.kANCHO_VENTANA_PRINCIPAL;
+import static config.UIConstants.kHEIGHT_MAIN_WINDOW;
+import static config.UIConstants.kWIDTH_MAIN_WINDOW;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,7 +16,7 @@ public class Main {
         JFrame frame = new JFrame(rb.getString("window.title"));
 
         // Tamano de la ventana
-        frame.setSize(kANCHO_VENTANA_PRINCIPAL, kALTO_VENTANA_PRINCIPAL);
+        frame.setSize(kWIDTH_MAIN_WINDOW, kHEIGHT_MAIN_WINDOW);
         frame.setContentPane(new VentanaPrincipal(rb, rb.getLocale()).getPanelGeneral());
 
         // Para poder cerrar el programa

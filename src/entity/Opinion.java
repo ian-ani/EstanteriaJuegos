@@ -1,12 +1,12 @@
 package entity;
 
-public enum Valoracion {
+public enum Opinion {
     /* VALORES */
 
-    GUSTADO,
-    NO_GUSTADO,
-    INDIFERENTE,
-    NO_VALORADO;
+    LIKED,
+    NOT_LIKED,
+    INDIFFERENT,
+    NOT_RATED;
 
     /* ATRIBUTOS */
 
@@ -26,11 +26,11 @@ public enum Valoracion {
 
     /* OTROS METODOS */
 
-    public static boolean esMiembro(String valor) {
-        Valoracion[] valoraciones = Valoracion.values();
+    public static boolean isMember(String value) {
+        Opinion[] opinions = Opinion.values();
 
-        for (Valoracion valoracion: valoraciones) {
-            if (valoracion.name().equalsIgnoreCase(valor)) return true;
+        for (Opinion opinion : opinions) {
+            if (opinion.name().equalsIgnoreCase(value)) return true;
         }
 
         return false;

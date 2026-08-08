@@ -5,18 +5,18 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class General {
-    public static void bloquearBotones(JPanel panel, boolean estado, JButton ...btnIgnorar) {
+    public static void bloquearBotones(JPanel panel, boolean status, JButton ...ignoreBtn) {
         // Componentes del panel
-        Component[] componentes = panel.getComponents();
+        Component[] components = panel.getComponents();
 
         // Si es un boton, desactivar
-        for (Component c: componentes) {
+        for (Component c: components) {
             if (c instanceof JButton btn) {
                 // Comprobar si es un boton a NO bloquear
-                boolean esNoBloquear = Arrays.asList(btnIgnorar).contains(btn);
+                boolean isNoBlockBtn = Arrays.asList(ignoreBtn).contains(btn);
 
-                if (!esNoBloquear) {
-                    btn.setEnabled(estado);
+                if (!isNoBlockBtn) {
+                    btn.setEnabled(status);
                 }
             }
         }

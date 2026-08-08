@@ -306,7 +306,7 @@
     </children>
   </grid>
   <buttonGroups>
-    <group name="estados">
+    <group name="statuses">
       <member id="c8e5e"/>
       <member id="d69a2"/>
       <member id="163a8"/>

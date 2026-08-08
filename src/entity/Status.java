@@ -1,12 +1,12 @@
 package entity;
 
-public enum Estado {
+public enum Status {
     /* VALORES */
 
-    COMPLETADO,
-    JUGANDO,
-    PENDIENTE,
-    ABANDONADO;
+    COMPLETED,
+    PLAYING,
+    TO_PLAY,
+    DROPPED;
 
     /* ATRIBUTOS */
 
@@ -27,11 +27,11 @@ public enum Estado {
 
     /* OTROS METODOS */
 
-    public static boolean esMiembro(String valor) {
-        Estado[] estados = Estado.values();
+    public static boolean isMember(String value) {
+        Status[] statuses = Status.values();
 
-        for (Estado estado: estados) {
-            if (estado.name().equalsIgnoreCase(valor)) return true;
+        for (Status status : statuses) {
+            if (status.name().equalsIgnoreCase(value)) return true;
         }
 
         return false;

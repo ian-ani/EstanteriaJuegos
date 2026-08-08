@@ -1,11 +1,11 @@
 package ui.dialog;
 
 import dao.DataManager;
-import entity.Estado;
-import entity.Etiqueta;
-import entity.Juego;
-import entity.Valoracion;
-import util.Mensaje;
+import entity.Opinion;
+import entity.Status;
+import entity.Tag;
+import entity.Game;
+import util.Message;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,14 +16,14 @@ import java.util.function.Consumer;
 
 public class DetalleJuego extends JDialog {
     // Etiquetas
-    private Set<Etiqueta> etiquetasTmp = new HashSet<>();
+    private Set<Tag> etiquetasTmp = new HashSet<>();
 
     // Consumer
-    private Consumer<Juego> onJuegoCreado; // callback consumer
+    private Consumer<Game> onJuegoCreado; // callback consumer
 
     // Lista de juegos y juegos seleccionado
-    private List<Juego> juegos;
-    private Juego juegoSeleccionado;
+    private List<Game> games;
+    private Game juegoSeleccionado;
     private Modo modoSeleccionado;
 
     // Variables de idioma
@@ -69,13 +69,13 @@ public class DetalleJuego extends JDialog {
         VER, CREAR;
     }
 
-    public DetalleJuego(ResourceBundle rb, Locale locale, List<Juego> juegos, Juego juegoSeleccionado, Modo modo) {
+    public DetalleJuego(ResourceBundle rb, Locale locale, List<Game> games, Game juegoSeleccionado, Modo modo) {
         // Anadir ResourceBundle
         this.rb = rb;
         this.locale = locale;
 
         // Juegos, juego seleccionado y modo (ver o anadir)
-        this.juegos = juegos;
+        this.games = games;
         this.juegoSeleccionado = juegoSeleccionado;
         this.modoSeleccionado = modo;
 
@@ -126,14 +126,14 @@ public class DetalleJuego extends JDialog {
                         // Anadir panel con campo de texto y un boton de eliminar
                         crearPanelEtiqueta(etiquetaEntrada.getText().trim());
                     } else {
-                        Mensaje.mostrarMensajeError(
+                        Message.showMessageError(
                                 rb.getString("error.invalid_tag.title"),
                                 rb.getString("error.invalid_tag.msg")
                         );
                         return;
                     }
                 } else {
-                    Mensaje.mostrarMensajeError(
+                    Message.showMessageError(
                             rb.getString("error.max_limit_tag.title"),
                             rb.getString("error.max_limit_tag.msg")
                     );
@@ -156,12 +156,12 @@ public class DetalleJuego extends JDialog {
         if (etiquetaExiste(nombre)) return;
 
         // Crear etiqueta
-        Etiqueta etiqueta = new Etiqueta(nombre);
+        Tag tag = new Tag(nombre);
 
         // Guardar etiqueta
         if (juegoSeleccionado != null) {
-            juegoSeleccionado.anadirEtiqueta(etiqueta);
-            etiquetasTmp.add(etiqueta);
+            juegoSeleccionado.addTag(tag);
+            etiquetasTmp.add(tag);
         }
 
         // Anadir panel
@@ -180,10 +180,10 @@ public class DetalleJuego extends JDialog {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                etiquetasTmp.remove(etiqueta);
+                etiquetasTmp.remove(tag);
 
                 if (juegoSeleccionado != null) {
-                    juegoSeleccionado.getEtiquetas().remove(etiqueta);
+                    juegoSeleccionado.getTags().remove(tag);
                 }
 
                 // Borrar etiqueta (nivel visual)
@@ -222,9 +222,9 @@ public class DetalleJuego extends JDialog {
     }
 
     private boolean etiquetaExiste(String etiqueta) {
-        for (Etiqueta e: etiquetasTmp) {
-            if (e.getNombre().equalsIgnoreCase(etiqueta)) {
-                System.out.println(e.getNombre() + " " + etiqueta);
+        for (Tag e: etiquetasTmp) {
+            if (e.getName().equalsIgnoreCase(etiqueta)) {
+                System.out.println(e.getName() + " " + etiqueta);
                 return true;
             }
         }
@@ -293,16 +293,16 @@ public class DetalleJuego extends JDialog {
         buttonOK.setText(rb.getString("button.edit"));
 
         // Volcar toda la informacion de Juego a los campos de texto
-        nombreEntrada.setText(juegoSeleccionado.getNombre());
-        plataformaEntrada.setText(juegoSeleccionado.getPlataforma());
-        notasEntrada.setText(juegoSeleccionado.getNotas());
+        nombreEntrada.setText(juegoSeleccionado.getName());
+        plataformaEntrada.setText(juegoSeleccionado.getPlatform());
+        notasEntrada.setText(juegoSeleccionado.getNotes());
 
         // Marcar radios
-        marcarRadio(estadoPanel, juegoSeleccionado.getEstado().toString());
-        marcarRadio(valoracionPanel, juegoSeleccionado.getValoracion().toString());
+        marcarRadio(estadoPanel, juegoSeleccionado.getStatus().toString());
+        marcarRadio(valoracionPanel, juegoSeleccionado.getOpinion().toString());
 
         // Anadir etiquetas
-        for (Etiqueta e: juegoSeleccionado.getEtiquetas()) {
+        for (Tag e: juegoSeleccionado.getTags()) {
             crearPanelEtiqueta(String.valueOf(e));
         }
     }
@@ -349,17 +349,17 @@ public class DetalleJuego extends JDialog {
     }
 
     private void nombreEstado() {
-        traducir(completadoRadio, "Estado.COMPLETADO");
-        traducir(jugandoRadio, "Estado.JUGANDO");
-        traducir(pendienteRadio, "Estado.PENDIENTE");
-        traducir(abandonadoRadio, "Estado.ABANDONADO");
+        traducir(completadoRadio, "Status.COMPLETED");
+        traducir(jugandoRadio, "Status.PLAYING");
+        traducir(pendienteRadio, "Status.TO_PLAY");
+        traducir(abandonadoRadio, "Status.DROPPED");
     }
 
     private void nombreValoracion() {
-        traducir(gustadoRadio, "Valoracion.GUSTADO");
-        traducir(noGustadoRadio, "Valoracion.NO_GUSTADO");
-        traducir(indiferenteRadio, "Valoracion.INDIFERENTE");
-        traducir(noValoradoRadio, "Valoracion.NO_VALORADO");
+        traducir(gustadoRadio, "Opinion.LIKED");
+        traducir(noGustadoRadio, "Opinion.NOT_LIKED");
+        traducir(indiferenteRadio, "Opinion.INDIFFERENT");
+        traducir(noValoradoRadio, "Opinion.NOT_RATED");
     }
 
     // Limpia el juego de la ventana actual para que no quede basurilla
@@ -375,24 +375,24 @@ public class DetalleJuego extends JDialog {
     }
 
     // Guardar los datos de campos y radios en Juego
-    private Juego crearJuego() {
+    private Game crearJuego() {
         //Set<Etiqueta> tmp = new HashSet<>();
 
         // Obtener campos
         String nombre = nombreEntrada.getText();
         String plataforma = plataformaEntrada.getText();
-        Estado estado = Estado.valueOf(getRadio(estadoPanel));
-        Valoracion valoracion = Valoracion.valueOf(getRadio(valoracionPanel));
+        Status status = Status.valueOf(getRadio(estadoPanel));
+        Opinion opinion = Opinion.valueOf(getRadio(valoracionPanel));
         String notas = notasEntrada.getText();
 
         // Instanciar juego
-        Juego juego = new Juego(0, nombre, plataforma, estado, valoracion, notas);
+        Game game = new Game(0, nombre, plataforma, status, opinion, notas);
 
         // Anadir etiquetas
         for (Component c: etiquetasAnadidasPanel.getComponents()) {
             if (c instanceof JPanel panel) {
                 for (Component p: panel.getComponents()) {
-                    if (p instanceof JTextField tf) juego.anadirEtiqueta(new Etiqueta(tf.getText()));
+                    if (p instanceof JTextField tf) game.addTag(new Tag(tf.getText()));
                 }
             }
         }
@@ -401,12 +401,12 @@ public class DetalleJuego extends JDialog {
             juego.anadirEtiqueta(e);
         }*/
 
-        return juego;
+        return game;
     }
 
     private boolean verificarJuegoExistente(String nombre, String plataforma) {
-        for (Juego juego: juegos) {
-            if (juego.getNombre().equalsIgnoreCase(nombre) && juego.getPlataforma().equalsIgnoreCase(plataforma)) {
+        for (Game game : games) {
+            if (game.getName().equalsIgnoreCase(nombre) && game.getPlatform().equalsIgnoreCase(plataforma)) {
                 //System.out.println("El juego ya existe.");
                 return true;
             }
@@ -430,11 +430,11 @@ public class DetalleJuego extends JDialog {
         }*/
 
         // Cambiar datos
-        juegoSeleccionado.setNombre(nombre);
-        juegoSeleccionado.setPlataforma(plataforma);
-        juegoSeleccionado.setEstado(Estado.valueOf(getRadio(estadoPanel)));
-        juegoSeleccionado.setValoracion(Valoracion.valueOf(getRadio(valoracionPanel)));
-        juegoSeleccionado.setNotas(notasEntrada.getText());
+        juegoSeleccionado.setName(nombre);
+        juegoSeleccionado.setPlatform(plataforma);
+        juegoSeleccionado.setStatus(Status.valueOf(getRadio(estadoPanel)));
+        juegoSeleccionado.setOpinion(Opinion.valueOf(getRadio(valoracionPanel)));
+        juegoSeleccionado.setNotes(notasEntrada.getText());
 
         // Anadir etiquetas
         /*for (Etiqueta e: juegoSeleccionado.getEtiquetas()) {
@@ -442,12 +442,12 @@ public class DetalleJuego extends JDialog {
         }*/
 
         if (DataManager.updateGame(juegoSeleccionado)) {
-            Mensaje.mostrarMensajeInfo(
+            Message.showMessageInfo(
                     rb.getString("info.edit_game.title"),
                     rb.getString("info.edit_game.msg")
             );
         } else {
-            Mensaje.mostrarMensajeError(
+            Message.showMessageError(
                     rb.getString("error.edit_game.title"),
                     rb.getString("error.edit_game.msg")
             );
@@ -460,16 +460,16 @@ public class DetalleJuego extends JDialog {
             switch (modoSeleccionado) {
                 case Modo.VER -> modificarJuego();
                 case Modo.CREAR -> {
-                    Juego juego = crearJuego();
+                    Game game = crearJuego();
 
                     // Si hay 'alguien' esta a la espera de una senal
                     if (onJuegoCreado != null) {
-                        onJuegoCreado.accept(juego); // ejecuta callback
+                        onJuegoCreado.accept(game); // ejecuta callback
                     }
                 }
             }
         } catch (Exception e) {
-            Mensaje.mostrarMensajeError(
+            Message.showMessageError(
                     rb.getString("error.save_game.title"),
                     rb.getString("error.save_game.msg")
             );
@@ -486,7 +486,7 @@ public class DetalleJuego extends JDialog {
     }
 
     // Registrar callback
-    public void setOnJuegoCreado(Consumer<Juego> c) {
+    public void setOnJuegoCreado(Consumer<Game> c) {
         this.onJuegoCreado = c;
     }
 }

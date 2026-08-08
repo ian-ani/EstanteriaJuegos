@@ -1,6 +1,6 @@
 package dao;
 
-import entity.Juego;
+import entity.Game;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,13 +13,12 @@ public class DataManager {
     private static final Logger kLOGGER = Logger.getLogger(DataManager.class.getName());
 
     // Obtener juegos
-    // TODO no se si esto estara bien
-    public static List<Juego> getGames() {
+    public static List<Game> getGames() {
         if (DBManager.loadDriver() && DBManager.connect()) {
             try {
                 return DBManager.getGames();
             } catch (SQLException e) {
-                kLOGGER.log(Level.WARNING, "Ha habido un error intentando obtener todos los juegos.");
+                kLOGGER.log(Level.WARNING, "An error has been found trying to get all the games.");
                 return new ArrayList<>();
             }
         } else {
@@ -28,12 +27,12 @@ public class DataManager {
     }
 
     // Obtener juegos por nombre
-    public static List<Juego> selectGameByName(String name) {
+    public static List<Game> selectGameByName(String name) {
         if (DBManager.loadDriver() && DBManager.connect()) {
             try {
                 return DBManager.selectGameByName(name);
             } catch (SQLException e) {
-                kLOGGER.log(Level.WARNING, "Ha habido un error intentando obtener un juego con ese nombre.");
+                kLOGGER.log(Level.WARNING, "An error has been found trying to get a game by that name.");
                 return new ArrayList<>();
             } finally {
                 DBManager.close();
@@ -44,12 +43,12 @@ public class DataManager {
     }
 
     // Obtener juegos por plataforma
-    public static List<Juego> selectGameByPlatform(String name) {
+    public static List<Game> selectGameByPlatform(String name) {
         if (DBManager.loadDriver() && DBManager.connect()) {
             try {
                 return DBManager.selectGameByPlatform(name);
             } catch (SQLException e) {
-                kLOGGER.log(Level.WARNING, "Ha habido un error intentando obtener un juego con esa plataforma.");
+                kLOGGER.log(Level.WARNING, "An error has been found trying to get a game by that platform.");
                 return new ArrayList<>();
             } finally {
                 DBManager.close();
@@ -60,7 +59,7 @@ public class DataManager {
     }
 
     // Insertar nuevo juego
-    public static boolean insertGame(Juego game) {
+    public static boolean insertGame(Game game) {
         if (DBManager.connect() && DBManager.insertGame(game)) {
             DBManager.close();
             return true;
@@ -71,7 +70,7 @@ public class DataManager {
     }
 
     // Editar un juego
-    public static boolean updateGame(Juego game) {
+    public static boolean updateGame(Game game) {
         if (DBManager.connect() && DBManager.updateGame(game)) {
             DBManager.close();
             return true;
@@ -82,7 +81,7 @@ public class DataManager {
     }
 
     // Borrar un juego
-    public static boolean deleteGame(Juego game) {
+    public static boolean deleteGame(Game game) {
         if (DBManager.connect() && DBManager.deleteGame(game)) {
             DBManager.close();
             return true;
@@ -92,5 +91,3 @@ public class DataManager {
         return false;
     }
 }
-
-// TODO localizacion de los mensajes
