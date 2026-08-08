@@ -3,10 +3,10 @@ package entity;
 public enum Status {
     /* VALORES */
 
-    COMPLETED,
-    PLAYING,
-    TO_PLAY,
-    DROPPED;
+    COMPLETADO,
+    JUGANDO,
+    PENDIENTE,
+    ABANDONADO;
 
     /* ATRIBUTOS */
 

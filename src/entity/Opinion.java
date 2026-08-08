@@ -3,10 +3,10 @@ package entity;
 public enum Opinion {
     /* VALORES */
 
-    LIKED,
-    NOT_LIKED,
-    INDIFFERENT,
-    NOT_RATED;
+    GUSTADO,
+    NO_GUSTADO,
+    INDIFERENTE,
+    NO_VALORADO;
 
     /* ATRIBUTOS */
 

@@ -273,9 +273,9 @@ public class MainWindow {
 
             data[i][0] = game.getName();
             data[i][1] = game.getPlatform();
-            data[i][2] = rb.getString("Estado." + game.getStatus());
+            data[i][2] = rb.getString("Status." + game.getStatus());
             data[i][3] = game.getTags();
-            data[i][4] = rb.getString("Valoracion." + game.getOpinion());
+            data[i][4] = rb.getString("Opinion." + game.getOpinion());
             data[i][5] = game.getNotes();
         }
 

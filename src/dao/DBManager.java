@@ -70,7 +70,7 @@ public class DBManager {
             kLOGGER.log(Level.INFO, kDB_MSQ_CONN_OK);
             return true;
         } catch (SQLException e) {
-            kLOGGER.log(Level.SEVERE, kDB_MSQ_CONN_NO);
+            kLOGGER.log(Level.SEVERE, kDB_MSQ_CONN_NO, e);
             return false;
         }
     }

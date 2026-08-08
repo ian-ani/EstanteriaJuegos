@@ -349,17 +349,17 @@ public class DetailGame extends JDialog {
     }
 
     private void statusName() {
-        translate(completedRadio, "Status.COMPLETED");
-        translate(playingRadio, "Status.PLAYING");
-        translate(toPlayRadio, "Status.TO_PLAY");
-        translate(droppedRadio, "Status.DROPPED");
+        translate(completedRadio, "Status.COMPLETADO");
+        translate(playingRadio, "Status.JUGANDO");
+        translate(toPlayRadio, "Status.PENDIENTE");
+        translate(droppedRadio, "Status.ABANDONADO");
     }
 
     private void opinionName() {
-        translate(likedRadio, "Opinion.LIKED");
-        translate(notLikedRadio, "Opinion.NOT_LIKED");
-        translate(indifferentRadio, "Opinion.INDIFFERENT");
-        translate(notRatedRadio, "Opinion.NOT_RATED");
+        translate(likedRadio, "Opinion.GUSTADO");
+        translate(notLikedRadio, "Opinion.NO_GUSTADO");
+        translate(indifferentRadio, "Opinion.INDIFERENTE");
+        translate(notRatedRadio, "Opinion.NO_VALORADO");
     }
 
     // Limpia el juego de la ventana actual para que no quede basurilla
@@ -469,6 +469,7 @@ public class DetailGame extends JDialog {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             Message.showMessageError(
                     rb.getString("error.save_game.title"),
                     rb.getString("error.save_game.msg")
