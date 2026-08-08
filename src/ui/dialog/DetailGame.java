@@ -14,76 +14,76 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class DetalleJuego extends JDialog {
+public class DetailGame extends JDialog {
     // Etiquetas
-    private Set<Tag> etiquetasTmp = new HashSet<>();
+    private Set<Tag> tagsTmp = new HashSet<>();
 
     // Consumer
-    private Consumer<Game> onJuegoCreado; // callback consumer
+    private Consumer<Game> onCreatedGame; // callback consumer
 
     // Lista de juegos y juegos seleccionado
     private List<Game> games;
-    private Game juegoSeleccionado;
-    private Modo modoSeleccionado;
+    private Game selectedGame;
+    private Mode selectedMode;
 
     // Variables de idioma
     private ResourceBundle rb;
     private Locale locale;
 
-    private JPanel panelGeneral;
+    private JPanel generalPanel;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JPanel botonesPanel;
-    private JPanel botonesPanelSecundario;
-    private JPanel detallePanel;
-    private JLabel nombreLabel;
-    private JLabel plataformaLabel;
-    private JLabel estadoLabel;
-    private JLabel etiquetasLabel;
-    private JLabel valoracionLabel;
-    private JLabel notasLabel;
-    private JTextField nombreEntrada;
-    private JTextField plataformaEntrada;
-    private JRadioButton completadoRadio;
-    private JRadioButton jugandoRadio;
-    private JRadioButton pendienteRadio;
-    private JRadioButton abandonadoRadio;
-    private JPanel nombrePanel;
-    private JPanel plataformaPanel;
-    private JPanel estadoPanel;
-    private JPanel etiquetasPanel;
-    private JPanel valoracionPanel;
-    private JRadioButton gustadoRadio;
-    private JRadioButton indiferenteRadio;
-    private JRadioButton noGustadoRadio;
-    private JPanel notasPanel;
-    private JTextArea notasEntrada;
-    private JRadioButton noValoradoRadio;
-    private JPanel valoracionEstadoPanel;
-    private JTextField etiquetaEntrada;
-    private JButton anadirEtiquetaButton;
-    private JPanel etiquetasAnadidasPanel;
+    private JPanel buttonsPanel;
+    private JPanel buttonsSecondaryPanel;
+    private JPanel detailPanel;
+    private JLabel nameLabel;
+    private JLabel platformLabel;
+    private JLabel statusLabel;
+    private JLabel tagsLabel;
+    private JLabel opinionLabel;
+    private JLabel notesLabel;
+    private JTextField nameInput;
+    private JTextField platformInput;
+    private JRadioButton completedRadio;
+    private JRadioButton playingRadio;
+    private JRadioButton toPlayRadio;
+    private JRadioButton droppedRadio;
+    private JPanel namePanel;
+    private JPanel platformPanel;
+    private JPanel statusPanel;
+    private JPanel tagsPanel;
+    private JPanel opinionPanel;
+    private JRadioButton likedRadio;
+    private JRadioButton indifferentRadio;
+    private JRadioButton notLikedRadio;
+    private JPanel notesPanel;
+    private JTextArea notesInput;
+    private JRadioButton notRatedRadio;
+    private JPanel opinionStatusPanel;
+    private JTextField tagInput;
+    private JButton addTagButton;
+    private JPanel addedTagsPanel;
 
     // Enum anidado para el 'Modo' (se pasa al constructor al abrir la ventana)
-    public enum Modo {
-        VER, CREAR;
+    public enum Mode {
+        VIEW, CREATE;
     }
 
-    public DetalleJuego(ResourceBundle rb, Locale locale, List<Game> games, Game juegoSeleccionado, Modo modo) {
+    public DetailGame(ResourceBundle rb, Locale locale, List<Game> games, Game selectedGame, Mode mode) {
         // Anadir ResourceBundle
         this.rb = rb;
         this.locale = locale;
 
         // Juegos, juego seleccionado y modo (ver o anadir)
         this.games = games;
-        this.juegoSeleccionado = juegoSeleccionado;
-        this.modoSeleccionado = modo;
+        this.selectedGame = selectedGame;
+        this.selectedMode = mode;
 
         // Configuracion inicial de la ventana (limpieza de registro anterior y texto del boton 'ok')
         init();
 
         // Mas configuracion de la ventana
-        setContentPane(panelGeneral);
+        setContentPane(generalPanel);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
@@ -110,21 +110,21 @@ public class DetalleJuego extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        panelGeneral.registerKeyboardAction(new ActionListener() {
+        generalPanel.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         // Evento al anadir una etiqueta y pulsar '+'
-        anadirEtiquetaButton.addActionListener(new ActionListener() {
+        addTagButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!validarLargoEtiquetas()) {
-                    if (validarEntrada(15, etiquetaEntrada)) {
+                if (!validateLengthTags()) {
+                    if (validateInput(15, tagInput)) {
                         // TODO hacer que los botones de las etiquetas sean mas pequenos, se ve feo
                         // Anadir panel con campo de texto y un boton de eliminar
-                        crearPanelEtiqueta(etiquetaEntrada.getText().trim());
+                        createTagPanel(tagInput.getText().trim());
                     } else {
                         Message.showMessageError(
                                 rb.getString("error.invalid_tag.title"),
@@ -141,36 +141,36 @@ public class DetalleJuego extends JDialog {
                 }
 
                 // Redibujar panel
-                redibujarEtiquetas(etiquetasAnadidasPanel);
+                redrawTags(addedTagsPanel);
             }
         });
     }
 
-    private void redibujarEtiquetas(JPanel panel) {
+    private void redrawTags(JPanel panel) {
         panel.revalidate();
         panel.repaint();
     }
 
-    private void crearPanelEtiqueta(String nombre) {
+    private void createTagPanel(String nombre) {
         // Si la etiqueta ya existe, no continuar
-        if (etiquetaExiste(nombre)) return;
+        if (tagExists(nombre)) return;
 
         // Crear etiqueta
         Tag tag = new Tag(nombre);
 
         // Guardar etiqueta
-        if (juegoSeleccionado != null) {
-            juegoSeleccionado.addTag(tag);
-            etiquetasTmp.add(tag);
+        if (selectedGame != null) {
+            selectedGame.addTag(tag);
+            tagsTmp.add(tag);
         }
 
         // Anadir panel
         JPanel panel = new JPanel();
-        etiquetasAnadidasPanel.add(panel);
+        addedTagsPanel.add(panel);
 
         // Anadir texto
-        JTextField textoEtiqueta = new JTextField(nombre);
-        panel.add(textoEtiqueta);
+        JTextField textTag = new JTextField(nombre);
+        panel.add(textTag);
 
         // Anadir boton
         JButton btn = new JButton("x");
@@ -180,51 +180,51 @@ public class DetalleJuego extends JDialog {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                etiquetasTmp.remove(tag);
+                tagsTmp.remove(tag);
 
-                if (juegoSeleccionado != null) {
-                    juegoSeleccionado.getTags().remove(tag);
+                if (selectedGame != null) {
+                    selectedGame.getTags().remove(tag);
                 }
 
                 // Borrar etiqueta (nivel visual)
-                etiquetasAnadidasPanel.remove(panel);
+                addedTagsPanel.remove(panel);
 
                 // Redibujar panel
-                redibujarEtiquetas(etiquetasAnadidasPanel);
+                redrawTags(addedTagsPanel);
             }
         });
     }
 
-    private boolean validarLargoEtiquetas() {
+    private boolean validateLengthTags() {
         // Numero de etiquetas
-        int numEtiquetas = 0;
+        int numTags = 0;
 
         // Componentes del panel
-        Component[] componentes = etiquetasAnadidasPanel.getComponents();
+        Component[] components = addedTagsPanel.getComponents();
 
         // Recorrer componentes, si es un JPanel incrementar el contador
-        for (Component c: componentes) {
+        for (Component c: components) {
             if (c instanceof JPanel) {
-                numEtiquetas++;
+                numTags++;
             }
         }
 
-        return (numEtiquetas >= 3);
+        return (numTags >= 3);
     }
 
     // Valida el largo de las entradas
-    private boolean validarEntrada(int largo, JTextField campo) {
-        if (campo.getText().trim().isEmpty()) {
+    private boolean validateInput(int length, JTextField field) {
+        if (field.getText().trim().isEmpty()) {
             return false;
         }
 
-        return campo.getText().trim().length() <= largo;
+        return field.getText().trim().length() <= length;
     }
 
-    private boolean etiquetaExiste(String etiqueta) {
-        for (Tag e: etiquetasTmp) {
-            if (e.getName().equalsIgnoreCase(etiqueta)) {
-                System.out.println(e.getName() + " " + etiqueta);
+    private boolean tagExists(String tag) {
+        for (Tag e: tagsTmp) {
+            if (e.getName().equalsIgnoreCase(tag)) {
+                System.out.println(e.getName() + " " + tag);
                 return true;
             }
         }
@@ -234,9 +234,9 @@ public class DetalleJuego extends JDialog {
 
     // Obtener valor de los radios
     private String getRadio(JPanel panel) {
-        Component[] componentes = panel.getComponents();
+        Component[] components = panel.getComponents();
 
-        for (Component c: componentes) {
+        for (Component c: components) {
             if (c instanceof JRadioButton btn) {
                 if (btn.isSelected()) {
                     return btn.getActionCommand();
@@ -248,25 +248,25 @@ public class DetalleJuego extends JDialog {
     }
 
     // Selecciona un radio (cuando se pulsa 'ver', es para rellenar con lo que haya en la tabla)
-    private void marcarRadio(JPanel panel, String valor) {
+    private void checkRadio(JPanel panel, String value) {
         // Componentes del panel
-        Component[] componentes = panel.getComponents();
+        Component[] components = panel.getComponents();
 
         // Si coin
-        for (Component c: componentes) {
+        for (Component c: components) {
             if (c instanceof JRadioButton btn) {
-                btn.setSelected(btn.getActionCommand().equalsIgnoreCase(valor));
+                btn.setSelected(btn.getActionCommand().equalsIgnoreCase(value));
             }
         }
     }
 
     // Quita la seleccion de los radio del panel pasado y pone como seleccionado un radio especifico
-    private void reiniciarRadio(JPanel panel, JRadioButton radio) {
+    private void clearRadio(JPanel panel, JRadioButton radio) {
         // Componentes del panel
-        Component[] componentes = panel.getComponents();
+        Component[] components = panel.getComponents();
 
         // Si es un boton, deseleccionar
-        for (Component c: componentes) {
+        for (Component c: components) {
             if (c instanceof JRadioButton btn) {
                 btn.setSelected(false);
             }
@@ -276,120 +276,120 @@ public class DetalleJuego extends JDialog {
     }
 
     // Reinicia las etiquetas (las borra)
-    private void reiniciarEtiquetas(JPanel panel) {
+    private void clearTags(JPanel panel) {
         // Componentes del panel
-        Component[] componentes = panel.getComponents();
+        Component[] components = panel.getComponents();
 
         // Recorrer componentes, borrar si es un JPanel
-        for (Component c: componentes) {
+        for (Component c: components) {
             if (c instanceof JPanel) {
                 panel.remove(c);
             }
         }
     }
 
-    private void initVer() {
+    private void initView() {
         // Cambiar texto de boton 'OK' a 'Editar'
         buttonOK.setText(rb.getString("button.edit"));
 
         // Volcar toda la informacion de Juego a los campos de texto
-        nombreEntrada.setText(juegoSeleccionado.getName());
-        plataformaEntrada.setText(juegoSeleccionado.getPlatform());
-        notasEntrada.setText(juegoSeleccionado.getNotes());
+        nameInput.setText(selectedGame.getName());
+        platformInput.setText(selectedGame.getPlatform());
+        notesInput.setText(selectedGame.getNotes());
 
         // Marcar radios
-        marcarRadio(estadoPanel, juegoSeleccionado.getStatus().toString());
-        marcarRadio(valoracionPanel, juegoSeleccionado.getOpinion().toString());
+        checkRadio(statusPanel, selectedGame.getStatus().toString());
+        checkRadio(opinionPanel, selectedGame.getOpinion().toString());
 
         // Anadir etiquetas
-        for (Tag e: juegoSeleccionado.getTags()) {
-            crearPanelEtiqueta(String.valueOf(e));
+        for (Tag e: selectedGame.getTags()) {
+            createTagPanel(String.valueOf(e));
         }
     }
 
-    private void initCrear() {
+    private void initCreate() {
         // Cambiar texto de boton 'OK' a 'Crear'
         buttonOK.setText(rb.getString("button.add"));
 
         // Vaciar campos de texto
-        nombreEntrada.setText("");
-        plataformaEntrada.setText("");
-        notasEntrada.setText("");
+        nameInput.setText("");
+        platformInput.setText("");
+        notesInput.setText("");
 
         // Deseleccionar todos los radios y seleccionar uno especifico
-        reiniciarRadio(estadoPanel, completadoRadio);
-        reiniciarRadio(valoracionPanel, noValoradoRadio);
+        clearRadio(statusPanel, completedRadio);
+        clearRadio(opinionPanel, notRatedRadio);
 
         // Eliminar lo referente a etiquetas (campo de texto, vaciar lista, vaciar paneles)
-        etiquetaEntrada.setText("");
+        tagInput.setText("");
 
         // Vaciar etiquetas temporales
-        etiquetasTmp.clear();
+        tagsTmp.clear();
 
-        reiniciarEtiquetas(etiquetasAnadidasPanel);
+        clearTags(addedTagsPanel);
     }
 
     // Traducir nombre de las propiedades
-    private void traducir(JLabel label, String txt) {
+    private void translate(JLabel label, String txt) {
         label.setText(rb.getString(txt) + ":");
     }
 
-    private void nombrePropiedades() {
-        traducir(nombreLabel, "table.name");
-        traducir(plataformaLabel, "table.platform");
-        traducir(etiquetasLabel, "table.tags");
-        traducir(estadoLabel, "table.status");
-        traducir(valoracionLabel, "table.opinion");
-        traducir(notasLabel, "table.notes");
+    private void propertiesName() {
+        translate(nameLabel, "table.name");
+        translate(platformLabel, "table.platform");
+        translate(tagsLabel, "table.tags");
+        translate(statusLabel, "table.status");
+        translate(opinionLabel, "table.opinion");
+        translate(notesLabel, "table.notes");
     }
 
     // Traducir nombre de los botones de estado y valoracion
-    private void traducir(JRadioButton radio, String txt) {
+    private void translate(JRadioButton radio, String txt) {
         radio.setText(rb.getString(txt));
     }
 
-    private void nombreEstado() {
-        traducir(completadoRadio, "Status.COMPLETED");
-        traducir(jugandoRadio, "Status.PLAYING");
-        traducir(pendienteRadio, "Status.TO_PLAY");
-        traducir(abandonadoRadio, "Status.DROPPED");
+    private void statusName() {
+        translate(completedRadio, "Status.COMPLETED");
+        translate(playingRadio, "Status.PLAYING");
+        translate(toPlayRadio, "Status.TO_PLAY");
+        translate(droppedRadio, "Status.DROPPED");
     }
 
-    private void nombreValoracion() {
-        traducir(gustadoRadio, "Opinion.LIKED");
-        traducir(noGustadoRadio, "Opinion.NOT_LIKED");
-        traducir(indiferenteRadio, "Opinion.INDIFFERENT");
-        traducir(noValoradoRadio, "Opinion.NOT_RATED");
+    private void opinionName() {
+        translate(likedRadio, "Opinion.LIKED");
+        translate(notLikedRadio, "Opinion.NOT_LIKED");
+        translate(indifferentRadio, "Opinion.INDIFFERENT");
+        translate(notRatedRadio, "Opinion.NOT_RATED");
     }
 
     // Limpia el juego de la ventana actual para que no quede basurilla
     private void init() {
-        nombrePropiedades();
-        nombreEstado();
-        nombreValoracion();
+        propertiesName();
+        statusName();
+        opinionName();
 
-        switch (modoSeleccionado) {
-            case Modo.VER -> initVer();
-            case Modo.CREAR -> initCrear();
+        switch (selectedMode) {
+            case Mode.VIEW -> initView();
+            case Mode.CREATE -> initCreate();
         }
     }
 
     // Guardar los datos de campos y radios en Juego
-    private Game crearJuego() {
+    private Game createGame() {
         //Set<Etiqueta> tmp = new HashSet<>();
 
         // Obtener campos
-        String nombre = nombreEntrada.getText();
-        String plataforma = plataformaEntrada.getText();
-        Status status = Status.valueOf(getRadio(estadoPanel));
-        Opinion opinion = Opinion.valueOf(getRadio(valoracionPanel));
-        String notas = notasEntrada.getText();
+        String name = nameInput.getText();
+        String platform = platformInput.getText();
+        Status status = Status.valueOf(getRadio(statusPanel));
+        Opinion opinion = Opinion.valueOf(getRadio(opinionPanel));
+        String notes = notesInput.getText();
 
         // Instanciar juego
-        Game game = new Game(0, nombre, plataforma, status, opinion, notas);
+        Game game = new Game(0, name, platform, status, opinion, notes);
 
         // Anadir etiquetas
-        for (Component c: etiquetasAnadidasPanel.getComponents()) {
+        for (Component c: addedTagsPanel.getComponents()) {
             if (c instanceof JPanel panel) {
                 for (Component p: panel.getComponents()) {
                     if (p instanceof JTextField tf) game.addTag(new Tag(tf.getText()));
@@ -404,9 +404,9 @@ public class DetalleJuego extends JDialog {
         return game;
     }
 
-    private boolean verificarJuegoExistente(String nombre, String plataforma) {
+    private boolean verifyExistingGame(String name, String platform) {
         for (Game game : games) {
-            if (game.getName().equalsIgnoreCase(nombre) && game.getPlatform().equalsIgnoreCase(plataforma)) {
+            if (game.getName().equalsIgnoreCase(name) && game.getPlatform().equalsIgnoreCase(platform)) {
                 //System.out.println("El juego ya existe.");
                 return true;
             }
@@ -416,10 +416,10 @@ public class DetalleJuego extends JDialog {
     }
 
     // Modificar juego si se ha abierto desde 'ver'
-    private void modificarJuego() {
+    private void modifyGame() {
         // Extraer los dos datos para la verificacion de un juego existente
-        String nombre = nombreEntrada.getText();
-        String plataforma = plataformaEntrada.getText();
+        String name = nameInput.getText();
+        String platform = platformInput.getText();
 
         // TODO Verificar si el juego existe (y no efectuar los cambios si es asi)
         //boolean existente = verificarJuegoExistente(nombre, plataforma);
@@ -430,18 +430,18 @@ public class DetalleJuego extends JDialog {
         }*/
 
         // Cambiar datos
-        juegoSeleccionado.setName(nombre);
-        juegoSeleccionado.setPlatform(plataforma);
-        juegoSeleccionado.setStatus(Status.valueOf(getRadio(estadoPanel)));
-        juegoSeleccionado.setOpinion(Opinion.valueOf(getRadio(valoracionPanel)));
-        juegoSeleccionado.setNotes(notasEntrada.getText());
+        selectedGame.setName(name);
+        selectedGame.setPlatform(platform);
+        selectedGame.setStatus(Status.valueOf(getRadio(statusPanel)));
+        selectedGame.setOpinion(Opinion.valueOf(getRadio(opinionPanel)));
+        selectedGame.setNotes(notesInput.getText());
 
         // Anadir etiquetas
         /*for (Etiqueta e: juegoSeleccionado.getEtiquetas()) {
             juegoSeleccionado.anadirEtiqueta(e);
         }*/
 
-        if (DataManager.updateGame(juegoSeleccionado)) {
+        if (DataManager.updateGame(selectedGame)) {
             Message.showMessageInfo(
                     rb.getString("info.edit_game.title"),
                     rb.getString("info.edit_game.msg")
@@ -457,14 +457,14 @@ public class DetalleJuego extends JDialog {
     // Boton 'OK'
     private void onOK() {
         try {
-            switch (modoSeleccionado) {
-                case Modo.VER -> modificarJuego();
-                case Modo.CREAR -> {
-                    Game game = crearJuego();
+            switch (selectedMode) {
+                case Mode.VIEW -> modifyGame();
+                case Mode.CREATE -> {
+                    Game game = createGame();
 
                     // Si hay 'alguien' esta a la espera de una senal
-                    if (onJuegoCreado != null) {
-                        onJuegoCreado.accept(game); // ejecuta callback
+                    if (onCreatedGame != null) {
+                        onCreatedGame.accept(game); // ejecuta callback
                     }
                 }
             }
@@ -486,8 +486,8 @@ public class DetalleJuego extends JDialog {
     }
 
     // Registrar callback
-    public void setOnJuegoCreado(Consumer<Game> c) {
-        this.onJuegoCreado = c;
+    public void setOnCreatedGame(Consumer<Game> c) {
+        this.onCreatedGame = c;
     }
 }
 

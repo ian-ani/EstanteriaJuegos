@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ui.dialog.DetalleJuego">
-  <grid id="cbd77" binding="panelGeneral" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ui.dialog.DetailGame">
+  <grid id="cbd77" binding="generalPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
       <xy x="48" y="54" width="868" height="555"/>
@@ -8,7 +8,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="94766" binding="botonesPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="94766" binding="buttonsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -21,7 +21,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <grid id="9538f" binding="botonesPanelSecundario" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="9538f" binding="buttonsSecondaryPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -49,7 +49,7 @@
           </grid>
         </children>
       </grid>
-      <grid id="e3588" binding="detallePanel" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="e3588" binding="detailPanel" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -57,7 +57,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="9535e" binding="nombrePanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="9535e" binding="namePanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="5" left="5" bottom="5" right="5"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -65,7 +65,7 @@
             <properties/>
             <border type="etched"/>
             <children>
-              <component id="3d864" class="javax.swing.JLabel" binding="nombreLabel">
+              <component id="3d864" class="javax.swing.JLabel" binding="nameLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -74,7 +74,7 @@
                   <text value="Nombre:"/>
                 </properties>
               </component>
-              <component id="a6529" class="javax.swing.JTextField" binding="nombreEntrada">
+              <component id="a6529" class="javax.swing.JTextField" binding="nameInput">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -84,7 +84,7 @@
               </component>
             </children>
           </grid>
-          <grid id="7a3b7" binding="plataformaPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="7a3b7" binding="platformPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="5" left="5" bottom="5" right="5"/>
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -92,7 +92,7 @@
             <properties/>
             <border type="etched"/>
             <children>
-              <component id="9816e" class="javax.swing.JLabel" binding="plataformaLabel">
+              <component id="9816e" class="javax.swing.JLabel" binding="platformLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -101,7 +101,7 @@
                   <text value="Plataforma:"/>
                 </properties>
               </component>
-              <component id="d9a10" class="javax.swing.JTextField" binding="plataformaEntrada">
+              <component id="d9a10" class="javax.swing.JTextField" binding="platformInput">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -111,7 +111,7 @@
               </component>
             </children>
           </grid>
-          <grid id="2ba5a" binding="etiquetasPanel" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="2ba5a" binding="tagsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="5" left="5" bottom="5" right="5"/>
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -119,7 +119,7 @@
             <properties/>
             <border type="etched"/>
             <children>
-              <component id="61985" class="javax.swing.JLabel" binding="etiquetasLabel">
+              <component id="61985" class="javax.swing.JLabel" binding="tagsLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -127,7 +127,7 @@
                   <text value="Etiquetas:"/>
                 </properties>
               </component>
-              <component id="dc0e5" class="javax.swing.JTextField" binding="etiquetaEntrada">
+              <component id="dc0e5" class="javax.swing.JTextField" binding="tagInput">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="4" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -135,7 +135,7 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="d505d" class="javax.swing.JButton" binding="anadirEtiquetaButton">
+              <component id="d505d" class="javax.swing.JButton" binding="addTagButton">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -143,7 +143,7 @@
                   <text value="+"/>
                 </properties>
               </component>
-              <grid id="dbe6d" binding="etiquetasAnadidasPanel" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="1">
+              <grid id="dbe6d" binding="addedTagsPanel" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="1">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -153,7 +153,7 @@
               </grid>
             </children>
           </grid>
-          <grid id="ee1ea" binding="notasPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="ee1ea" binding="notesPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="5" left="5" bottom="5" right="5"/>
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -161,7 +161,7 @@
             <properties/>
             <border type="etched"/>
             <children>
-              <component id="95e97" class="javax.swing.JLabel" binding="notasLabel">
+              <component id="95e97" class="javax.swing.JLabel" binding="notesLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -170,7 +170,7 @@
                   <text value="Notas:"/>
                 </properties>
               </component>
-              <component id="eee78" class="javax.swing.JTextArea" binding="notasEntrada">
+              <component id="eee78" class="javax.swing.JTextArea" binding="notesInput">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="50"/>
@@ -180,7 +180,7 @@
               </component>
             </children>
           </grid>
-          <grid id="4b54b" binding="valoracionEstadoPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="4b54b" binding="opinionStatusPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -188,7 +188,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="dd874" binding="valoracionPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="dd874" binding="opinionPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="5" left="5" bottom="5" right="0"/>
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -196,7 +196,7 @@
                 <properties/>
                 <border type="etched"/>
                 <children>
-                  <component id="63ad7" class="javax.swing.JLabel" binding="valoracionLabel">
+                  <component id="63ad7" class="javax.swing.JLabel" binding="opinionLabel">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -204,7 +204,7 @@
                       <text value="Valoración:"/>
                     </properties>
                   </component>
-                  <component id="e1716" class="javax.swing.JRadioButton" binding="gustadoRadio">
+                  <component id="e1716" class="javax.swing.JRadioButton" binding="likedRadio">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -214,7 +214,7 @@
                       <text value="Gustado"/>
                     </properties>
                   </component>
-                  <component id="adf6f" class="javax.swing.JRadioButton" binding="indiferenteRadio">
+                  <component id="adf6f" class="javax.swing.JRadioButton" binding="indifferentRadio">
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -223,7 +223,7 @@
                       <text value="Indiferente"/>
                     </properties>
                   </component>
-                  <component id="606a0" class="javax.swing.JRadioButton" binding="noGustadoRadio">
+                  <component id="606a0" class="javax.swing.JRadioButton" binding="notLikedRadio">
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -232,7 +232,7 @@
                       <text value="No gustado"/>
                     </properties>
                   </component>
-                  <component id="9c63d" class="javax.swing.JRadioButton" binding="noValoradoRadio">
+                  <component id="9c63d" class="javax.swing.JRadioButton" binding="notRatedRadio">
                     <constraints>
                       <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -244,7 +244,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="6051e" binding="estadoPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="6051e" binding="statusPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="5" left="5" bottom="5" right="0"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -252,7 +252,7 @@
                 <properties/>
                 <border type="etched"/>
                 <children>
-                  <component id="477d6" class="javax.swing.JLabel" binding="estadoLabel">
+                  <component id="477d6" class="javax.swing.JLabel" binding="statusLabel">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -260,7 +260,7 @@
                       <text value="Estado:"/>
                     </properties>
                   </component>
-                  <component id="c8e5e" class="javax.swing.JRadioButton" binding="completadoRadio">
+                  <component id="c8e5e" class="javax.swing.JRadioButton" binding="completedRadio">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -270,7 +270,7 @@
                       <text value="Completado"/>
                     </properties>
                   </component>
-                  <component id="d69a2" class="javax.swing.JRadioButton" binding="jugandoRadio">
+                  <component id="d69a2" class="javax.swing.JRadioButton" binding="playingRadio">
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -279,7 +279,7 @@
                       <text value="Jugando"/>
                     </properties>
                   </component>
-                  <component id="163a8" class="javax.swing.JRadioButton" binding="pendienteRadio">
+                  <component id="163a8" class="javax.swing.JRadioButton" binding="toPlayRadio">
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -288,7 +288,7 @@
                       <text value="Pendiente"/>
                     </properties>
                   </component>
-                  <component id="83fa" class="javax.swing.JRadioButton" binding="abandonadoRadio">
+                  <component id="83fa" class="javax.swing.JRadioButton" binding="droppedRadio">
                     <constraints>
                       <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -312,7 +312,7 @@
       <member id="163a8"/>
       <member id="83fa"/>
     </group>
-    <group name="valoraciones">
+    <group name="opinions">
       <member id="e1716"/>
       <member id="adf6f"/>
       <member id="606a0"/>

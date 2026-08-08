@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ui.VentanaPrincipal">
-  <grid id="27dc6" binding="panelGeneral" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ui.MainWindow">
+  <grid id="27dc6" binding="generalPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="20" left="20" bottom="20" right="20"/>
     <constraints>
-      <xy x="20" y="20" width="541" height="400"/>
+      <xy x="20" y="20" width="574" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="f4cc1" binding="juegoPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="f4cc1" binding="gamePanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -16,7 +16,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="e7fe1" binding="busquedaPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="e7fe1" binding="searchPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -24,7 +24,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="41d1d" class="javax.swing.JTextField" binding="busquedaEntrada">
+              <component id="41d1d" class="javax.swing.JTextField" binding="searchInput">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
@@ -32,7 +32,7 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="7774f" class="javax.swing.JButton" binding="reiniciarButton">
+              <component id="7774f" class="javax.swing.JButton" binding="clearButton">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -40,7 +40,7 @@
                   <text value="Reiniciar"/>
                 </properties>
               </component>
-              <component id="d4f5e" class="javax.swing.JComboBox" binding="filtroComboBox">
+              <component id="d4f5e" class="javax.swing.JComboBox" binding="filterComboBox">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -48,14 +48,14 @@
               </component>
             </children>
           </grid>
-          <scrollpane id="5b5a7" binding="tablaPanel">
+          <scrollpane id="5b5a7" binding="tablePanel">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
             <children>
-              <component id="fe318" class="javax.swing.JTable" binding="tabla">
+              <component id="fe318" class="javax.swing.JTable" binding="table">
                 <constraints/>
                 <properties>
                   <autoCreateRowSorter value="false"/>
@@ -65,7 +65,7 @@
           </scrollpane>
         </children>
       </grid>
-      <grid id="16514" binding="botonesPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="16514" binding="buttonsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -73,7 +73,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="4a9fc" binding="juegoBotonPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="4a9fc" binding="gameButtonPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
@@ -81,7 +81,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="e4f68" class="javax.swing.JButton" binding="eliminarButton">
+              <component id="e4f68" class="javax.swing.JButton" binding="removeButton">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -90,7 +90,7 @@
                   <text value="Eliminar"/>
                 </properties>
               </component>
-              <component id="32ec8" class="javax.swing.JButton" binding="verButton">
+              <component id="32ec8" class="javax.swing.JButton" binding="editButton">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -99,7 +99,7 @@
                   <text value="Ver"/>
                 </properties>
               </component>
-              <component id="f208c" class="javax.swing.JButton" binding="anadirButton">
+              <component id="f208c" class="javax.swing.JButton" binding="addButton">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -117,7 +117,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="545a8" class="javax.swing.JButton" binding="exportarButton">
+              <component id="545a8" class="javax.swing.JButton" binding="exportButton">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -126,7 +126,7 @@
                   <text value="Exportar CSV"/>
                 </properties>
               </component>
-              <component id="65044" class="javax.swing.JButton" binding="idiomaButton">
+              <component id="65044" class="javax.swing.JButton" binding="languageButton">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>

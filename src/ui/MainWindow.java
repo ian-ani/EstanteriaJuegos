@@ -2,7 +2,7 @@ package ui;
 
 import dao.DataManager;
 import entity.Game;
-import ui.dialog.DetalleJuego;
+import ui.dialog.DetailGame;
 import util.ConvertCsv;
 import util.General;
 import util.Message;
@@ -16,41 +16,41 @@ import java.util.List;
 
 import static config.UIConstants.*;
 
-public class VentanaPrincipal {
+public class MainWindow {
     /* ATRIBUTOS */
 
     // Variables de GestionJuegos
-    private JPanel panelGeneral;
-    private JPanel busquedaPanel;
-    private JPanel juegoPanel;
-    private JPanel botonesPanel;
-    private JButton eliminarButton;
-    private JButton verButton;
-    private JButton anadirButton;
-    private JScrollPane tablaPanel;
-    private JTextField busquedaEntrada;
-    private JTable tabla;
-    private JPanel juegoBotonPanel;
+    private JPanel generalPanel;
+    private JPanel searchPanel;
+    private JPanel gamePanel;
+    private JPanel buttonsPanel;
+    private JButton removeButton;
+    private JButton editButton;
+    private JButton addButton;
+    private JScrollPane tablePanel;
+    private JTextField searchInput;
+    private JTable table;
+    private JPanel gameButtonPanel;
     private JPanel miscPanel;
-    private JButton exportarButton;
-    private JButton reiniciarButton;
-    private JComboBox filtroComboBox;
-    private JButton idiomaButton;
+    private JButton exportButton;
+    private JButton clearButton;
+    private JComboBox filterComboBox;
+    private JButton languageButton;
 
     // Variables de idioma
     private ResourceBundle rb;
     private Locale locale;
 
     // Juego seleccionado
-    Game juegoSeleccionado;
+    Game selectedGame;
 
     // Lista donde se van a guardar los juegos temporalmente
     List<Game> games = new ArrayList<>();
-    List<Game> juegosMostrados = new ArrayList<>();
+    List<Game> showedGames = new ArrayList<>();
 
     /* CONSTRUCTOR */
 
-    public VentanaPrincipal(ResourceBundle rb, Locale locale) {
+    public MainWindow(ResourceBundle rb, Locale locale) {
         // Anadir ResourceBundle
         this.rb = rb;
         this.locale = locale;
@@ -59,62 +59,62 @@ public class VentanaPrincipal {
         init();
 
         // Llama a la ventana de 'anadir juego'
-        anadirButton.addActionListener(new ActionListener() {
+        addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                anadir();
+                add();
             }
         });
 
         // Ver registro seleccionado y permite editar en la nueva ventana de dialogo
-        verButton.addActionListener(new ActionListener() {
+        editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ver();
-                General.bloquearBotones(juegoBotonPanel, false, anadirButton);
+                edit();
+                General.blockButtons(gameButtonPanel, false, addButton);
 
-                // Volver a mostrar la tabla
+                // Volver a mostrar la table
                 games = DataManager.getGames();
-                juegosMostrados = games;
-                crearTabla(juegosMostrados);
+                showedGames = games;
+                createTable(showedGames);
             }
         });
 
         // Seleccionar fila
-        tabla.addMouseListener(new MouseAdapter() {
+        table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 JTable t = (JTable) e.getSource();
                 Point p = e.getPoint();
-                int fila = tabla.rowAtPoint(p);
+                int row = table.rowAtPoint(p);
 
-                if (e.getClickCount() != -1 && tabla.getSelectedRow() != -1 && fila != -1) {
-                    int filaModelo = tabla.convertRowIndexToModel(fila);
-                    juegoSeleccionado = juegosMostrados.get(filaModelo);
-                    General.bloquearBotones(juegoBotonPanel, true, anadirButton);
+                if (e.getClickCount() != -1 && table.getSelectedRow() != -1 && row != -1) {
+                    int rowModel = table.convertRowIndexToModel(row);
+                    selectedGame = showedGames.get(rowModel);
+                    General.blockButtons(gameButtonPanel, true, addButton);
                 }
             }
         });
 
         // Busca un juego (por nombre) al pulsar 'Enter'
-        busquedaEntrada.addKeyListener(new KeyAdapter() {
+        searchInput.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     // Si esta vacio, early return
-                    if (busquedaEntrada.getText().isBlank()) return;
+                    if (searchInput.getText().isBlank()) return;
 
                     // Si no esta vacio, buscar
-                    boolean encontrado = buscar(busquedaEntrada.getText().trim());
+                    boolean found = search(searchInput.getText().trim());
 
-                    if (!encontrado) {
+                    if (!found) {
                         Message.showMessageError(
                                 rb.getString("error.not_found.title"),
                                 rb.getString("error.not_found.msg")
                         );
                     } else {
-                        if (juegoSeleccionado != null) {
-                            General.bloquearBotones(juegoBotonPanel, true, anadirButton);
+                        if (selectedGame != null) {
+                            General.blockButtons(gameButtonPanel, true, addButton);
                         }
                     }
                 }
@@ -122,37 +122,37 @@ public class VentanaPrincipal {
         });
 
         // Reinicia la tabla (despues de haber filtrado)
-        reiniciarButton.addActionListener(new ActionListener() {
+        clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Tecnicamente no es necesario si se escribe "" y pulsa 'Enter'
                 // pero queda un poco mejor de cara a UX?
-                reiniciar();
+                clear();
             }
         });
 
         // Borrar registro seleccionado
-        eliminarButton.addActionListener(new ActionListener() {
+        removeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Borrar juego guardado en 'juegoSeleccionado'
-                boolean borrado = eliminar();
+                boolean removed = remove();
 
                 // Mensaje al usuario
-                if (borrado) Message.showMessageInfo(rb.getString("info.delete_game.title"), rb.getString("info.delete_game.msg"));
+                if (removed) Message.showMessageInfo(rb.getString("info.delete_game.title"), rb.getString("info.delete_game.msg"));
                 else Message.showMessageError(rb.getString("error.delete_game.title"), rb.getString("error.delete_game.msg"));
 
                 // Volver a mostrar la tabla
-                juegosMostrados = games;
-                crearTabla(juegosMostrados);
+                showedGames = games;
+                createTable(showedGames);
 
                 // Bloquear botones
-                General.bloquearBotones(juegoBotonPanel, false, anadirButton);
+                General.blockButtons(gameButtonPanel, false, addButton);
             }
         });
 
         // Exportar a CSV
-        exportarButton.addActionListener(new ActionListener() {
+        exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = new JFileChooser();
@@ -177,11 +177,11 @@ public class VentanaPrincipal {
         });
 
         // Cambiar idioma
-        idiomaButton.addActionListener(new ActionListener() {
+        languageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (locale.equals(Locale.ENGLISH)) cambiarIdioma(new Locale("es"));
-                else cambiarIdioma(Locale.ENGLISH);
+                if (locale.equals(Locale.ENGLISH)) changeLanguage(new Locale("es"));
+                else changeLanguage(Locale.ENGLISH);
             }
         });
     }
@@ -189,7 +189,7 @@ public class VentanaPrincipal {
     /* GETTERS */
 
     public JPanel getPanelGeneral() {
-        return panelGeneral;
+        return generalPanel;
     }
 
     /* OTROS METODOS */
@@ -203,33 +203,33 @@ public class VentanaPrincipal {
         initComboBox();
 
         // Texto de los botones de acuerdo al idioma
-        nombreBotones();
+        nameButtons();
 
         // Mostrar juegos
-        juegosMostrados = games;
-        crearTabla(games);
+        showedGames = games;
+        createTable(games);
 
         // Bloquear botones de eliminar y editar hasta que haya un juego seleccionado
-        General.bloquearBotones(juegoBotonPanel, false, anadirButton);
+        General.blockButtons(gameButtonPanel, false, addButton);
     }
 
     private void initComboBox() {
-        filtroComboBox.setModel(new DefaultComboBoxModel<>(
+        filterComboBox.setModel(new DefaultComboBoxModel<>(
                 new String[] {rb.getString("filter.name"), rb.getString("filter.platform")}
         ));
     }
 
     // Boton de cambiar idioma (ingles o castellano)
-    private void cambiarIdioma(Locale locale) {
+    private void changeLanguage(Locale locale) {
         // Idioma
         // TODO poner el nombre del bundle en una constante
         rb = ResourceBundle.getBundle("i18n.messages", locale);
 
         // Obtener ancestro
-        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(panelGeneral);
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(generalPanel);
 
         // Crear nueva ventana principal
-        VentanaPrincipal vp = new VentanaPrincipal(rb, locale);
+        MainWindow vp = new MainWindow(rb, locale);
 
         // Volver a poner el titulo y el panel general en la nueva ventana
         frame.setTitle(rb.getString("window.title"));
@@ -240,47 +240,47 @@ public class VentanaPrincipal {
         frame.repaint();
 
         // Texto de los botones de acuerdo al idioma
-        nombreBotones();
+        nameButtons();
     }
 
     // Nombre de los botones de la ventana principal
-    private void traducir(JButton btn, String txt) {
+    private void translate(JButton btn, String txt) {
         btn.setText(rb.getString(txt));
     }
 
-    private void nombreBotones() {
-        traducir(anadirButton, "button.add");
-        traducir(verButton, "button.view");
-        traducir(eliminarButton, "button.remove");
-        traducir(idiomaButton, "button.language");
-        traducir(exportarButton, "button.export");
-        traducir(reiniciarButton, "button.clear");
+    private void nameButtons() {
+        translate(addButton, "button.add");
+        translate(editButton, "button.view");
+        translate(removeButton, "button.remove");
+        translate(languageButton, "button.language");
+        translate(exportButton, "button.export");
+        translate(clearButton, "button.clear");
     }
 
     // Tabla de la ventana principal con los registros del juego
-    private void crearTabla(List<Game> lista) {
-        juegoSeleccionado = null;
+    private void createTable(List<Game> list) {
+        selectedGame = null;
 
-        Object[][] datos = new Object[lista.size()][6];
-        String[] columnas = new String[] {
+        Object[][] data = new Object[list.size()][6];
+        String[] columns = new String[] {
                 rb.getString("table.name"), rb.getString("table.platform"), rb.getString("table.status"),
                 rb.getString("table.tags"), rb.getString("table.opinion"), rb.getString("table.notes")
         };
 
-        // Recorrer y guardar datos de los juegos en la tabla
-        for (int i = 0; i < lista.size(); i++) {
-            Game game = lista.get(i);
+        // Recorrer y guardar datos de los juegos en la table
+        for (int i = 0; i < list.size(); i++) {
+            Game game = list.get(i);
 
-            datos[i][0] = game.getName();
-            datos[i][1] = game.getPlatform();
-            datos[i][2] = rb.getString("Estado." + game.getStatus());
-            datos[i][3] = game.getTags();
-            datos[i][4] = rb.getString("Valoracion." + game.getOpinion());
-            datos[i][5] = game.getNotes();
+            data[i][0] = game.getName();
+            data[i][1] = game.getPlatform();
+            data[i][2] = rb.getString("Estado." + game.getStatus());
+            data[i][3] = game.getTags();
+            data[i][4] = rb.getString("Valoracion." + game.getOpinion());
+            data[i][5] = game.getNotes();
         }
 
-        // Crear tabla: datos y cabecera
-        tabla.setModel(new DefaultTableModel(datos, columnas) {
+        // Crear table: datos y cabecera
+        table.setModel(new DefaultTableModel(data, columns) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -289,21 +289,21 @@ public class VentanaPrincipal {
     }
 
     // Boton de anadir juego
-    private void anadir() {
-        DetalleJuego detalleJuegoWindow = new DetalleJuego(this.rb, this.locale, games, null, DetalleJuego.Modo.CREAR);
+    private void add() {
+        DetailGame detailGameWindow = new DetailGame(this.rb, this.locale, games, null, DetailGame.Mode.CREATE);
 
-        detalleJuegoWindow.setTitle(rb.getString("window.add.title"));
-        detalleJuegoWindow.setSize(kWIDTH_WINDOW, kHEIGHT_WINDOW);
-        detalleJuegoWindow.setResizable(false);
-        detalleJuegoWindow.setLocationRelativeTo(null);
+        detailGameWindow.setTitle(rb.getString("window.add.title"));
+        detailGameWindow.setSize(kWIDTH_WINDOW, kHEIGHT_WINDOW);
+        detailGameWindow.setResizable(false);
+        detailGameWindow.setLocationRelativeTo(null);
 
         // callback
-        detalleJuegoWindow.setOnJuegoCreado((juego) -> {
+        detailGameWindow.setOnCreatedGame((juego) -> {
                 if (!games.contains(juego)) {
                     DataManager.insertGame(juego);
                     games = DataManager.getGames();
-                    juegosMostrados = games;
-                    crearTabla(juegosMostrados);
+                    showedGames = games;
+                    createTable(showedGames);
                     Message.showMessageInfo(rb.getString("info.add_game.title"), rb.getString("info.add_game.msg"));
                 } else {
                     Message.showMessageWarning(rb.getString("warning.exist_game.title"), rb.getString("warning.exist_game.msg"));
@@ -311,11 +311,11 @@ public class VentanaPrincipal {
             }
         );
 
-        detalleJuegoWindow.setVisible(true);
+        detailGameWindow.setVisible(true);
     }
 
     // Boton de borrar juego
-    private void traducirBotonesEliminar() {
+    private void translateRemoveButtons() {
         if (!locale.equals(Locale.ENGLISH)) {
             UIManager.put("OptionPane.yesButtonText", "Sí");
         } else {
@@ -323,26 +323,26 @@ public class VentanaPrincipal {
         }
     }
 
-    private int ventanaConfirmacionBorrado() {
+    private int windowConfirmRemoval() {
          return JOptionPane.showConfirmDialog(
                 null,
-                rb.getString("info.confirm_delete_game.msg") + " " + juegoSeleccionado.getName() + "?",
+                rb.getString("info.confirm_delete_game.msg") + " " + selectedGame.getName() + "?",
                 rb.getString("info.confirm_delete_game.title"),
                 JOptionPane.YES_NO_OPTION
         );
     }
 
-    private boolean eliminar() {
+    private boolean remove() {
         // Traducir texto de los botones de 'SI' cuando el idioma seleccionado es el castellano
-        traducirBotonesEliminar();
+        translateRemoveButtons();
 
         // Mostrar una ventana de confirmacion
-        int respuesta = ventanaConfirmacionBorrado();
+        int answer = windowConfirmRemoval();
 
         // Si la respuesta es 'SI', entonces borrar el juego actual
-        if (respuesta == JOptionPane.YES_OPTION) {
-            if (DataManager.deleteGame(juegoSeleccionado)) {
-                games.remove(juegoSeleccionado);
+        if (answer == JOptionPane.YES_OPTION) {
+            if (DataManager.deleteGame(selectedGame)) {
+                games.remove(selectedGame);
                 return true;
             } else {
                 return false;
@@ -353,22 +353,22 @@ public class VentanaPrincipal {
     }
 
     // Boton de ver juego
-    private void ver() {
-        DetalleJuego detalleJuegoWindow = new DetalleJuego(this.rb, this.locale, games, juegoSeleccionado, DetalleJuego.Modo.VER);
+    private void edit() {
+        DetailGame detailGameWindow = new DetailGame(this.rb, this.locale, games, selectedGame, DetailGame.Mode.VIEW);
 
-        detalleJuegoWindow.setTitle(rb.getString("window.view.title"));
-        detalleJuegoWindow.setSize(kWIDTH_WINDOW, kHEIGHT_WINDOW);
-        detalleJuegoWindow.setResizable(false);
-        detalleJuegoWindow.setLocationRelativeTo(null);
+        detailGameWindow.setTitle(rb.getString("window.view.title"));
+        detailGameWindow.setSize(kWIDTH_WINDOW, kHEIGHT_WINDOW);
+        detailGameWindow.setResizable(false);
+        detailGameWindow.setLocationRelativeTo(null);
 
-        detalleJuegoWindow.setVisible(true);
+        detailGameWindow.setVisible(true);
 
         //juegosMostrados = juegos;
         //crearTabla(juegosMostrados);
     }
 
     // Busquedas de juego bajo criterio
-    private boolean buscarNombre(String nombre) {
+    private boolean searchName(String nombre) {
         List<Game> tmp = DataManager.selectGameByName(nombre);
 
         // Si la lista esta vacia
@@ -377,14 +377,14 @@ public class VentanaPrincipal {
         // Ordenar ascendentemente antes de mostrar
         tmp.sort(Comparator.comparing(Game::getName));
 
-        // Mostrar resultados en la tabla
-        juegosMostrados = tmp;
-        crearTabla(juegosMostrados);
+        // Mostrar resultados en la table
+        showedGames = tmp;
+        createTable(showedGames);
 
         return !tmp.isEmpty();
     }
 
-    private boolean buscarPlataforma(String nombre) {
+    private boolean searchPlatform(String nombre) {
         List<Game> tmp = DataManager.selectGameByPlatform(nombre);
 
         // Si la lista esta vacia
@@ -393,40 +393,40 @@ public class VentanaPrincipal {
         // Ordenar ascendentemente antes de mostrar
         tmp.sort(Comparator.comparing(Game::getPlatform));
 
-        // Mostrar resultados en la tabla
-        juegosMostrados = tmp;
-        crearTabla(juegosMostrados);
+        // Mostrar resultados en la table
+        showedGames = tmp;
+        createTable(showedGames);
 
         return !tmp.isEmpty();
     }
 
-    private boolean buscar(String nombre) {
+    private boolean search(String nombre) {
         // Obtener criterio de busqueda
-        String filtro = (String) filtroComboBox.getSelectedItem();
+        String filter = (String) filterComboBox.getSelectedItem();
 
         // Volver a bloquear botones de edicion y borrado
-        General.bloquearBotones(juegoBotonPanel, false, anadirButton);
+        General.blockButtons(gameButtonPanel, false, addButton);
 
         // Busqueda segun criterio
-        if (rb.getString("filter.name").equals(filtro)) {
-            return buscarNombre(nombre);
-        } else if (rb.getString("filter.platform").equals(filtro)) {
-            return buscarPlataforma(nombre);
+        if (rb.getString("filter.name").equals(filter)) {
+            return searchName(nombre);
+        } else if (rb.getString("filter.platform").equals(filter)) {
+            return searchPlatform(nombre);
         }
 
         return false;
     }
 
-    private void reiniciar() {
-        busquedaEntrada.setText("");
+    private void clear() {
+        searchInput.setText("");
 
         // Obtener registros
         games = DataManager.getGames();
 
-        juegosMostrados = games;
-        crearTabla(juegosMostrados);
+        showedGames = games;
+        createTable(showedGames);
 
-        General.bloquearBotones(juegoBotonPanel, false, anadirButton);
+        General.blockButtons(gameButtonPanel, false, addButton);
     }
 
     // Seguramente pulsando a algo de la cabecera podria filtrar por asc desc en base a esa columna?

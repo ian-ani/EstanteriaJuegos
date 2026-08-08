@@ -1,4 +1,4 @@
-import ui.VentanaPrincipal;
+import ui.MainWindow;
 
 import javax.swing.*;
 
@@ -17,7 +17,7 @@ public class Main {
 
         // Tamano de la ventana
         frame.setSize(kWIDTH_MAIN_WINDOW, kHEIGHT_MAIN_WINDOW);
-        frame.setContentPane(new VentanaPrincipal(rb, rb.getLocale()).getPanelGeneral());
+        frame.setContentPane(new MainWindow(rb, rb.getLocale()).getPanelGeneral());
 
         // Para poder cerrar el programa
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

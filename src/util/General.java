@@ -5,7 +5,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class General {
-    public static void bloquearBotones(JPanel panel, boolean status, JButton ...ignoreBtn) {
+    public static void blockButtons(JPanel panel, boolean status, JButton ...ignoreBtn) {
         // Componentes del panel
         Component[] components = panel.getComponents();
 
