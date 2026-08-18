@@ -442,6 +442,9 @@ public class DetailGame extends JDialog {
 
                     if (!verifyExistingGame(name, platform, id)) {
                         modifyGame();
+
+                        // Cerrar ventana
+                        dispose();
                     } else {
                         Message.showMessageWarning(
                                 rb.getString("warning.exist_game.title"),
@@ -457,6 +460,9 @@ public class DetailGame extends JDialog {
                         if (onCreatedGame != null) {
                             onCreatedGame.accept(game); // ejecuta callback
                         }
+
+                        // Cerrar ventana
+                        dispose();
                     } else {
                         Message.showMessageWarning(
                                 rb.getString("warning.exist_game.title"),
@@ -471,9 +477,6 @@ public class DetailGame extends JDialog {
                     rb.getString("error.save_game.title"),
                     rb.getString("error.save_game.msg")
             );
-        } finally {
-            // Cerrar ventana
-            dispose();
         }
     }
 

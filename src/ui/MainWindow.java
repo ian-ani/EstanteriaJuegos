@@ -425,7 +425,6 @@ public class MainWindow {
     }
 
     // Anadir icono del programa
-    // Estaria mejor que si el juego existe, te deje cambiar en lugar de cerrar la ventana de crear/ver
     // Validaciones??
     // Personalizacion?? Aunque eso es lo de menos
 }
