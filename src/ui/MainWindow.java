@@ -302,17 +302,12 @@ public class MainWindow {
 
         // callback
         detailGameWindow.setOnCreatedGame((juego) -> {
-                if (!games.contains(juego)) {
-                    DataManager.insertGame(juego);
-                    games = DataManager.getGames();
-                    showedGames = games;
-                    createTable(showedGames);
-                    Message.showMessageInfo(rb.getString("info.add_game.title"), rb.getString("info.add_game.msg"));
-                } else {
-                    Message.showMessageWarning(rb.getString("warning.exist_game.title"), rb.getString("warning.exist_game.msg"));
-                }
-            }
-        );
+            DataManager.insertGame(juego);
+            games = DataManager.getGames();
+            showedGames = games;
+            createTable(showedGames);
+            Message.showMessageInfo(rb.getString("info.add_game.title"), rb.getString("info.add_game.msg"));
+        });
 
         detailGameWindow.setVisible(true);
     }
@@ -433,5 +428,4 @@ public class MainWindow {
     // Estaria mejor que si el juego existe, te deje cambiar en lugar de cerrar la ventana de crear/ver
     // Validaciones??
     // Personalizacion?? Aunque eso es lo de menos
-    // Si el juego ya existe en editar, lo deja pasar, deberia comprobar si existe en la base de datos directamente
 }

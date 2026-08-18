@@ -376,8 +376,6 @@ public class DetailGame extends JDialog {
 
     // Guardar los datos de campos y radios en Juego
     private Game createGame() {
-        //Set<Etiqueta> tmp = new HashSet<>();
-
         // Obtener campos
         String name = nameInput.getText();
         String platform = platformInput.getText();
@@ -400,34 +398,20 @@ public class DetailGame extends JDialog {
         return game;
     }
 
+    // Comprobar si el juego existe o no (en base a coincidencia de nombre, plataforma y/o id)
     private boolean verifyExistingGame(String name, String platform) {
-        for (Game game : games) {
-            if (game.getName().equalsIgnoreCase(name) && game.getPlatform().equalsIgnoreCase(platform)) {
-                //System.out.println("El juego ya existe.");
-                return true;
-            }
-        }
+        return DataManager.selectGameByNameAndPlatform(name, platform) != null;
+    }
 
-        return false;
+    private boolean verifyExistingGame(String name, String platform, int id) {
+        return DataManager.selectGameByNameAndPlatformAndDifferentId(name, platform, id) != null;
     }
 
     // Modificar juego si se ha abierto desde 'ver'
     private void modifyGame() {
-        // Extraer los dos datos para la verificacion de un juego existente
-        String name = nameInput.getText();
-        String platform = platformInput.getText();
-
-        // TODO Verificar si el juego existe (y no efectuar los cambios si es asi)
-        //boolean existente = verificarJuegoExistente(nombre, plataforma);
-
-        /*if (existente) {
-            Mensaje.mostrarMensajePeligro("Juego existente", "El juego ya existe.");
-            return;
-        }*/
-
         // Cambiar datos
-        selectedGame.setName(name);
-        selectedGame.setPlatform(platform);
+        selectedGame.setName(nameInput.getText());
+        selectedGame.setPlatform(platformInput.getText());
         selectedGame.setStatus(Status.valueOf(getRadio(statusPanel)));
         selectedGame.setOpinion(Opinion.valueOf(getRadio(opinionPanel)));
         selectedGame.setNotes(notesInput.getText());
@@ -447,15 +431,37 @@ public class DetailGame extends JDialog {
 
     // Boton 'OK'
     private void onOK() {
+        // Campos para la verificacion
+        String name = nameInput.getText();
+        String platform = platformInput.getText();
+
         try {
             switch (selectedMode) {
-                case Mode.VIEW -> modifyGame();
-                case Mode.CREATE -> {
-                    Game game = createGame();
+                case Mode.VIEW -> {
+                    int id = selectedGame.getId();
 
-                    // Si hay 'alguien' esta a la espera de una senal
-                    if (onCreatedGame != null) {
-                        onCreatedGame.accept(game); // ejecuta callback
+                    if (!verifyExistingGame(name, platform, id)) {
+                        modifyGame();
+                    } else {
+                        Message.showMessageWarning(
+                                rb.getString("warning.exist_game.title"),
+                                rb.getString("warning.modify.exist_game.msg")
+                        );
+                    }
+                }
+                case Mode.CREATE -> {
+                    if (!verifyExistingGame(name, platform)) {
+                        Game game = createGame();
+
+                        // Si hay 'alguien' esta a la espera de una senal
+                        if (onCreatedGame != null) {
+                            onCreatedGame.accept(game); // ejecuta callback
+                        }
+                    } else {
+                        Message.showMessageWarning(
+                                rb.getString("warning.exist_game.title"),
+                                rb.getString("warning.create.exist_game.msg")
+                        );
                     }
                 }
             }
@@ -482,5 +488,3 @@ public class DetailGame extends JDialog {
         this.onCreatedGame = c;
     }
 }
-
-// TODO no admite repetidos en modificar pero en crear si... arreglar eso

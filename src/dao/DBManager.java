@@ -163,6 +163,45 @@ public class DBManager {
         return games;
     }
 
+    // Obtener juego por nombre y plataforma
+    public static Game selectGameByNameAndPlatform(String name, String platform) throws SQLException {
+        String query = GameQueries.kGET_GAME_BY_NAME_AND_PLATFORM;
+
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, name);
+            ps.setString(2, platform);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return buildGame(rs);
+            }
+        } catch (SQLException e) {
+            kLOGGER.log(Level.SEVERE, "Couldn't get this game.", e);
+        }
+
+        return null;
+    }
+
+    // Obtener juego por nombre, plataforma e id
+    public static Game selectGameByNameAndPlatformAndDifferentId(String name, String platform, int id) throws SQLException {
+        String query = GameQueries.kGET_GAME_BY_NAME_AND_PLATFORM_AND_DIFFERENT_ID;
+
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, name);
+            ps.setString(2, platform);
+            ps.setInt(3, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return buildGame(rs);
+            }
+        } catch (SQLException e) {
+            kLOGGER.log(Level.SEVERE, "Couldn't get this game.", e);
+        }
+
+        return null;
+    }
+
     // Insertar nuevo juego
     public static boolean insertGame(Game game) {
         kLOGGER.log(Level.INFO, String.format("Inserting game \n%s...\n", game));

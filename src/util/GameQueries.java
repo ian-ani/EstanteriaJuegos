@@ -9,6 +9,13 @@ public class GameQueries {
     public static final String kGET_ALL_GAMES = "SELECT * FROM juegos ORDER BY id DESC";
     public static final String kGET_GAME_BY_NAME = "SELECT * FROM juegos WHERE nombre LIKE ?";
     public static final String kGET_GAME_BY_PLATFORM = "SELECT * FROM juegos WHERE plataforma LIKE ?";
+    public static final String kGET_GAME_BY_NAME_AND_PLATFORM = "SELECT * FROM juegos WHERE " +
+            "LOWER(nombre) = LOWER(?) AND " +
+            "LOWER(plataforma) = LOWER(?)";
+    public static final String kGET_GAME_BY_NAME_AND_PLATFORM_AND_DIFFERENT_ID = "SELECT * FROM juegos WHERE " +
+            "LOWER(nombre) = LOWER(?) AND " +
+            "LOWER(plataforma) = LOWER(?) AND " +
+            "id != ?";
 
     // UPDATE
     public static final String kUPDATE_GAME = "UPDATE juegos SET nombre = ?, plataforma = ?, estado = ?, " +

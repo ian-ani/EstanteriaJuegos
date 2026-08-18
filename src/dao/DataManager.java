@@ -32,7 +32,8 @@ public class DataManager {
             try {
                 return DBManager.selectGameByName(name);
             } catch (SQLException e) {
-                kLOGGER.log(Level.WARNING, "An error has been found trying to get a game by that name.");
+                kLOGGER.log(Level.WARNING, "An error has been found trying to get a game by that name " +
+                        "or it doesn't exist.");
                 return new ArrayList<>();
             } finally {
                 DBManager.close();
@@ -48,7 +49,8 @@ public class DataManager {
             try {
                 return DBManager.selectGameByPlatform(name);
             } catch (SQLException e) {
-                kLOGGER.log(Level.WARNING, "An error has been found trying to get a game by that platform.");
+                kLOGGER.log(Level.WARNING, "An error has been found trying to get a game by that platform " +
+                        "or it doesn't exist.");
                 return new ArrayList<>();
             } finally {
                 DBManager.close();
@@ -56,6 +58,38 @@ public class DataManager {
         }
 
         return new ArrayList<>();
+    }
+
+    // Obtener juego por nombre y plataforma
+    public static Game selectGameByNameAndPlatform(String name, String platform) {
+        if (DBManager.loadDriver() && DBManager.connect()) {
+            try {
+                return DBManager.selectGameByNameAndPlatform(name, platform);
+            } catch (SQLException e) {
+                kLOGGER.log(Level.WARNING, "An error has been found trying to get a game by that name " +
+                        "and platform or it doesn't exist.");
+            } finally {
+                DBManager.close();
+            }
+        }
+
+        return null;
+    }
+
+    // Obtener juego por nombre, plataforma e id
+    public static Game selectGameByNameAndPlatformAndDifferentId(String name, String platform, int id) {
+        if (DBManager.loadDriver() && DBManager.connect()) {
+            try {
+                return DBManager.selectGameByNameAndPlatformAndDifferentId(name, platform, id);
+            } catch (SQLException e) {
+                kLOGGER.log(Level.WARNING, "An error has been found trying to get a game by that name " +
+                        ", platform and id or it doesn't exist.");
+            } finally {
+                DBManager.close();
+            }
+        }
+
+        return null;
     }
 
     // Insertar nuevo juego
