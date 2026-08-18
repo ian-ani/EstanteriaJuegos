@@ -286,6 +286,9 @@ public class MainWindow {
                 return false;
             }
         });
+
+        // Permitir ordenar de manera ascendente y descendente por campos
+        table.setAutoCreateRowSorter(true);
     }
 
     // Boton de anadir juego
@@ -429,12 +432,9 @@ public class MainWindow {
         General.blockButtons(gameButtonPanel, false, addButton);
     }
 
-    // Seguramente pulsando a algo de la cabecera podria filtrar por asc desc en base a esa columna?
     // Anadir icono del programa
     // Estaria mejor que si el juego existe, te deje cambiar en lugar de cerrar la ventana de crear/ver
-    // Anadir documentacion con javadoc
     // Validaciones??
     // Personalizacion?? Aunque eso es lo de menos
-    // Algunas partes del codigo (obviando comentarios) estan en un idioma y otras en otro, pasar todas al ingles
     // Si el juego ya existe en editar, lo deja pasar, deberia comprobar si existe en la base de datos directamente
 }
