@@ -8,23 +8,6 @@ public enum Status {
     PENDIENTE,
     ABANDONADO;
 
-    /* ATRIBUTOS */
-
-    //private final String nombre;
-
-    /* CONSTRUCTOR */
-
-    /*Estado(String nombre) {
-        this.nombre = nombre;
-    }*/
-
-    /* METODO TOSTRING */
-
-    /*@Override
-    public String toString() {
-        return this.nombre;
-    }*/
-
     /* OTROS METODOS */
 
     public static boolean isMember(String value) {

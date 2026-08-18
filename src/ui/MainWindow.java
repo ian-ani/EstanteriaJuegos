@@ -365,9 +365,6 @@ public class MainWindow {
         detailGameWindow.setLocationRelativeTo(null);
 
         detailGameWindow.setVisible(true);
-
-        //juegosMostrados = juegos;
-        //crearTabla(juegosMostrados);
     }
 
     // Busquedas de juego bajo criterio

@@ -397,10 +397,6 @@ public class DetailGame extends JDialog {
             }
         }
 
-        /*for (Etiqueta e: juegoSeleccionado.getEtiquetas()) {
-            juego.anadirEtiqueta(e);
-        }*/
-
         return game;
     }
 
@@ -435,11 +431,6 @@ public class DetailGame extends JDialog {
         selectedGame.setStatus(Status.valueOf(getRadio(statusPanel)));
         selectedGame.setOpinion(Opinion.valueOf(getRadio(opinionPanel)));
         selectedGame.setNotes(notesInput.getText());
-
-        // Anadir etiquetas
-        /*for (Etiqueta e: juegoSeleccionado.getEtiquetas()) {
-            juegoSeleccionado.anadirEtiqueta(e);
-        }*/
 
         if (DataManager.updateGame(selectedGame)) {
             Message.showMessageInfo(

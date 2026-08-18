@@ -8,22 +8,6 @@ public enum Opinion {
     INDIFERENTE,
     NO_VALORADO;
 
-    /* ATRIBUTOS */
-
-    //private final String nombre;
-
-    /* CONSTRUCTOR */
-
-    /*Valoracion(String nombre) {
-        t*/
-
-    /* METODO TOSTRING */
-
-    /*@Override
-    public String toString() {
-        return this.nombre;
-    }*/
-
     /* OTROS METODOS */
 
     public static boolean isMember(String value) {

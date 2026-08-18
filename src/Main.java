@@ -22,8 +22,6 @@ public class Main {
         // Para poder cerrar el programa
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //frame.pack();
-
         // Para que no se pueda redimensionar
         frame.setResizable(false);
 
