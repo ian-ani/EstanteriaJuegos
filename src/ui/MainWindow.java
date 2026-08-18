@@ -424,7 +424,5 @@ public class MainWindow {
         General.blockButtons(gameButtonPanel, false, addButton);
     }
 
-    // Anadir icono del programa
-    // Validaciones??
-    // Personalizacion?? Aunque eso es lo de menos
+    // TODO Anadir icono del programa
 }

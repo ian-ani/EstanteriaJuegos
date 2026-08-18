@@ -122,7 +122,6 @@ public class DetailGame extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 if (!validateLengthTags()) {
                     if (validateInput(15, tagInput)) {
-                        // TODO hacer que los botones de las etiquetas sean mas pequenos, se ve feo
                         // Anadir panel con campo de texto y un boton de eliminar
                         createTagPanel(tagInput.getText().trim());
                     } else {
