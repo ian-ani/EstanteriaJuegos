@@ -1,7 +1,7 @@
 [![Lang en](https://img.shields.io/badge/lang-en-blue?style=flat)](https://github.com/ian-ani/EstanteriaJuegos/blob/main/README.md)
 [![Lang es](https://img.shields.io/badge/lang-es-red?style=flat)](https://github.com/ian-ani/EstanteriaJuegos/blob/main/README.es.md)
 
-## Tabla de contenidos
+## Table of contents
 
 - [About](#about)
 - [Screenshots](#screenshots)
