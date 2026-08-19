@@ -14,7 +14,7 @@
 
 ## About
 
-A desktop program developed with Java that allows you to keep track of the in your physical (or digital!) collection. 
+A desktop program developed with Java that allows you to keep track of your physical (or digital!) collection. 
 Tested on **Windows 10**.
 
 ## Screenshots
